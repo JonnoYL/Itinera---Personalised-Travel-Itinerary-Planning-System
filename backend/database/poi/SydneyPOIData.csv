@@ -1,0 +1,29 @@
+poiID,poiName,lat,long,category,avg_visit_time_min,utility_score,fees,opening_time,closing_time
+1,Sydney Opera House,-33.8568,151.2153,Landmark,60,87317,0.0,0:00,23:59
+2,Sydney Harbour Bridge Pylon Lookout,-33.8523,151.2108,Lookout,60,1800,29.95,10:00,18:00
+3,Royal Botanic Garden Sydney,-33.8642,151.2166,Garden/Park,90,24960,0.0,7:00,18:30
+4,Taronga Zoo Sydney,-33.843,151.241,Zoo,240,34000,53.0,9:30,17:00
+5,Bondi Beach,-33.8908,151.2743,Beach,120,5256,0.0,0:00,23:59
+6,Art Gallery of NSW,-33.8689,151.217,Museum/Gallery,90,14687,0.0,10:00,17:00
+7,MCA Australia,-33.8599,151.2091,Museum/Gallery,90,9078,20.0,10:00,17:00
+8,SEA LIFE Sydney Aquarium,-33.8696,151.2021,Aquarium,105,21374,51.0,10:00,17:00
+9,WILD LIFE Sydney Zoo,-33.869,151.2015,Zoo,90,5272,44.0,10:00,17:00
+10,Australian National Maritime Museum,-33.869,151.1989,Museum,90,5996,0.0,10:00,16:00
+11,Darling Harbour,-33.871,151.199,Waterfront,90,62000,0.0,0:00,23:59
+12,The Rocks Discovery Museum,-33.8592,151.2079,Museum,60,613,0.0,10:00,17:00
+13,The Rocks Markets,-33.859,151.207,Market,60,6067,0.0,10:00,17:00
+14,Queen Victoria Building (QVB),-33.8718,151.2066,Shopping/Heritage,60,20115,0.0,9:00,18:00
+15,Hyde Park,-33.8731,151.211,Park,60,18000,0.0,0:00,23:59
+16,St Mary's Cathedral,-33.8704,151.2131,Cathedral/Heritage,60,8400,0.0,10:00,17:00
+17,Sydney Tower Eye,-33.8705,151.2087,Lookout,75,15000,35.0,10:00,20:00
+18,Barangaroo Reserve,-33.8583,151.2019,Park,60,4600,0.0,0:00,23:59
+19,Observatory Hill Park,-33.8599,151.2053,Park/Lookout,45,2822,0.0,0:00,23:59
+20,State Library of NSW,-33.8664,151.2127,Library/Heritage,60,1329,0.0,10:00,17:00
+21,Chinatown (Dixon Street),-33.877,151.2047,Market/Restaurant,60,7000,20,0:00,23:59
+22,Chinese Garden of Friendship,-33.8763,151.2022,Garden/Park,60,6111,12.0,10:00,17:00
+23,Pitt Street Mall,-33.8714,151.2074,Entertainment/Shopping,60,1905,0.0,9:00,19:00
+24,Museum of Sydney,-33.8653,151.2094,Museum,75,2903,15.0,10:00,17:00
+25,Luna Park Sydney,-33.8476,151.2109,Entertainment/Amusement Park,120,15977,0.0,11:00,18:00
+26,Sydney Fish Market,-33.873102,151.192596,Restaurant,60,26000,50,7:00,16:00
+27,Elements Bar and Grill Pyrmont,-33.86585279966627,151.1909783,Restaurant,60,5785,80,12:00,22:00
+28,Regent Place,-33.874643449667815,151.20624671976492,Entertainment/Shopping,60,2316,0.0,09:00,22:00

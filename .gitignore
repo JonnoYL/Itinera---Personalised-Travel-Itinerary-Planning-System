@@ -1,0 +1,6 @@
+.env
+*pyc
+node_modules/
+.venv/
+my_project_env/
+frontend/coverage/

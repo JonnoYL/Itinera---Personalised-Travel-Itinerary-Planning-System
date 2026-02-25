@@ -1,0 +1,16 @@
+fastapi
+uvicorn
+pydantic
+sqlalchemy
+psycopg2-binary
+python-dotenv
+bcrypt
+pyjwt
+pytest
+pytest-asyncio
+pytest-mock
+httpx
+ruff
+gurobipy
+pandas
+requests
