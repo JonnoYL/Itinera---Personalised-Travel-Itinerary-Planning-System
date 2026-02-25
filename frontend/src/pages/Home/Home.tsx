@@ -26,7 +26,6 @@ import { useUser } from "../../context/UserContext";
 import { useFocusEffect } from "@react-navigation/native";
 import type { BackendItinerary } from "../../lib/types";
 
-// Extract an array of polyline coordinate arrays from GeoJSON
 function extractPolyline(it: BackendItinerary): LatLng[][] {
   const lines: LatLng[][] = [];
   const fc = it.feature_collection;
@@ -45,7 +44,6 @@ function extractPolyline(it: BackendItinerary): LatLng[][] {
           typeof pair[0] === "number" &&
           typeof pair[1] === "number"
         ) {
-          // GeoJSON is [lon, lat]
           latlngs.push({ latitude: pair[1], longitude: pair[0] });
         }
       }
@@ -57,7 +55,6 @@ function extractPolyline(it: BackendItinerary): LatLng[][] {
 
 function formatTime(ts?: string | null): string {
   if (!ts || typeof ts !== "string") return "—";
-  // "HH:MM:SS"
   const parts = ts.split(":");
   if (parts.length < 2) return ts;
   const h = Number(parts[0]);
@@ -180,9 +177,7 @@ export default function Home() {
     }, [load]),
   );
 
-  // Request user location (disabled if expo-location is not installed)
   useEffect(() => {
-    // Keep default region; showsUserLocation will display if OS permission exists
   }, []);
 
   const zoomBy = useCallback(
@@ -276,7 +271,7 @@ export default function Home() {
             );
           })}
       </MapView>
-      {/* Zoom controls */}
+      {/* zoom controls */}
       <View style={[styles.zoomGroup, { bottom: 90 + insets.bottom }]}>
         <Pressable
           accessibilityRole="button"
@@ -293,7 +288,7 @@ export default function Home() {
           <Text style={styles.ctrlText}>−</Text>
         </Pressable>
       </View>
-      {/* Map type toggle (icon) */}
+      {/* map type toggle (icon) */}
       <Pressable
         accessibilityRole="button"
         onPress={() =>
@@ -311,7 +306,7 @@ export default function Home() {
           color="#1E1E1E"
         />
       </Pressable>
-      {/* Floating New Itinerary button */}
+      {/* floating New Itinerary button */}
       <Pressable
         accessibilityRole="button"
         onPress={() => navigation.navigate("NewItinerary")}
@@ -320,7 +315,7 @@ export default function Home() {
         <Text style={styles.newButtonText}>+ New Itinerary</Text>
       </Pressable>
 
-      {/* Bottom popup for selected itinerary */}
+      {/* bottom popup for selected itinerary */}
       {selectedItinerary && (
         <Animated.View
           style={[
@@ -329,14 +324,14 @@ export default function Home() {
             { transform: [{ translateY: sheetY }] },
           ]}
         >
-          {/* Collapse handle - slideable */}
+          {/* collapse handle - slideable */}
           <View
             style={{ alignItems: "center", paddingVertical: 6 }}
             {...panResponder.panHandlers}
           >
             <View style={styles.handle} />
           </View>
-          {/* Tappable card area */}
+          {/* tappable card area */}
           <Pressable
             onPress={() => {
               const id = selectedItinerary.id;
@@ -346,7 +341,7 @@ export default function Home() {
             accessibilityRole="button"
             style={{ flexDirection: "row", alignItems: "center" }}
           >
-            {/* Cover photo */}
+            {/* cover photo */}
             <View
               style={{
                 width: 72,
@@ -430,7 +425,6 @@ const styles = StyleSheet.create({
   cardPrice: { color: "#8C7F7A" },
   cardSub: { color: "#8C7F7A", marginTop: 2 },
   cardDate: { fontWeight: "700", color: "#1E1E1E", marginTop: 10 },
-
   bottomCard: {
     position: "absolute",
     left: 12,
@@ -470,7 +464,6 @@ const styles = StyleSheet.create({
     right: 20,
     alignItems: "center",
   },
-  // delete/trash button styles
   trashWrapBase: {
     position: "absolute",
     right: 12,
@@ -479,14 +472,12 @@ const styles = StyleSheet.create({
     padding: 8,
     opacity: 1,
   },
-
   trashHover: {
     shadowColor: "#F04623",
     shadowOpacity: 0.6,
     shadowRadius: 8,
     shadowOffset: { width: 0, height: 0 },
   },
-
   placeholder: {
     flex: 1,
     justifyContent: "flex-end",
@@ -541,7 +532,6 @@ const styles = StyleSheet.create({
   },
   ctrlText: { color: "#1E1E1E", fontSize: 18, fontWeight: "700" },
   typeIconBtn: { position: "absolute", right: 20 },
-
   modalOverlay: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: "rgba(0,0,0,0.35)",

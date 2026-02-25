@@ -11,9 +11,6 @@ type SignupErrorResponse = {
 
 const BASE_URL = process.env.EXPO_PUBLIC_API_URL || "http://localhost:8000";
 
-// NOTE: All HTTP calls are commented out during development to avoid backend dependency.
-// Replace dummy implementations below when the backend is ready.
-
 export async function signUpWithUsernamePassword(
   username: string,
   password: string,
@@ -29,17 +26,14 @@ export async function signUpWithUsernamePassword(
     const status = axiosError.response?.status;
     const detail = axiosError.response?.data?.detail;
 
-    // 400: username already exists -> "Username is taken"
     if (status === 400 && detail === "Username already exists") {
       return null;
     }
 
-    // 422: validation error (e.g. blank username) -> let caller decide
     if (status === 422) {
       throw axiosError;
     }
 
-    // Other errors: return null so caller can handle/log
     return null;
   }
 }
@@ -67,8 +61,6 @@ export async function loginWithUsernamePassword(
 }
 
 export async function signupWithEmailPassword(): Promise<AuthResponse> {
-  // const { data } = await axios.post<AuthResponse>(`${BASE_URL}/auth/signup`, { email, password });
-  // return data;
   await new Promise((resolve) => setTimeout(resolve, 600));
   return {
     token: "dev-token-signup-123",
@@ -77,7 +69,6 @@ export async function signupWithEmailPassword(): Promise<AuthResponse> {
 }
 
 export async function requestPasswordReset(): Promise<{ ok: boolean }> {
-  // await axios.post(`${BASE_URL}/auth/forgot-password`, { email });
   await new Promise((resolve) => setTimeout(resolve, 400));
   return { ok: true };
 }

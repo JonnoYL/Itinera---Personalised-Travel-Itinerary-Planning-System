@@ -4,7 +4,7 @@ import { UserProvider } from "../context/UserContext";
 import { loginWithUsernamePassword } from "../services/auth";
 import Login from "../pages/Auth/Login";
 
-// mock the navigation and auth service
+// mock the navigation and authentication service
 jest.mock("../services/auth");
 jest.mock("@react-navigation/native", () => ({
   useNavigation: jest.fn(() => ({ replace: jest.fn(), navigate: jest.fn() })),
@@ -23,8 +23,8 @@ jest.mock("@react-navigation/native", () => {
   };
 });
 
-// ensure each test starts with a clean slate so earlier calls (e.g. with empty inputs)
-// don"t pollute expectations in later tests
+// ensure each test starts with clean slate so earlier calls (e.g. with empty inputs)
+// avoid polluting expectations in later tests
 beforeEach(() => {
   jest.clearAllMocks();
   jest.useFakeTimers();
@@ -38,7 +38,7 @@ describe("Login component", () => {
       </UserProvider>,
     );
 
-    // look for a button with the accessible name "Login"
+    // look for button with the accessible name "Login"
     const loginButton = getByRole("button", { name: "Login" });
 
     expect(loginButton).toBeTruthy();
@@ -73,8 +73,9 @@ describe("Login component", () => {
     const usernameInput = getByPlaceholderText("Username");
     const passwordInput = getByPlaceholderText("Password");
 
-    // Enter username + password, then wait. React state updates are async, so
-    // pressing Login in the same tick can capture "" values in the handler.
+    // enter username + password, then wait
+    // React state updates are async
+    // pressing Login in the same tick can capture "" values in the handler
     await act(async () => {
       fireEvent.changeText(usernameInput, "devuser");
       fireEvent.changeText(passwordInput, "devpass123");
@@ -85,12 +86,12 @@ describe("Login component", () => {
       expect(passwordInput.props.value).toBe("devpass123");
     });
 
-    // Now we press Login after inputs reflect the new values
+    // now press Login after inputs reflect the new values
     await act(async () => {
       fireEvent.press(getByRole("button", { name: "Login" }));
     });
 
-    // Ensure we don"t have empty strings
+    // ensure no empty strings
     expect(loginWithUsernamePassword).not.toHaveBeenCalledWith("", "");
     expect(loginWithUsernamePassword).toHaveBeenCalledWith(
       "devuser",
@@ -124,12 +125,12 @@ describe("Login component", () => {
       expect(passwordInput.props.value).toBe("devpass123");
     });
 
-    // Now we press Login after inputs reflect the new values
+    // press Login after inputs reflect the new values
     await act(async () => {
       fireEvent.press(getByRole("button", { name: "Login" }));
     });
 
-    // Ensure we don't have empty strings
+    // ensure no empty strings
     expect(loginWithUsernamePassword).not.toHaveBeenCalledWith("", "");
     expect(loginWithUsernamePassword).toHaveBeenCalledWith(
       "devuser",
@@ -153,7 +154,7 @@ describe("Login component", () => {
     const usernameInput = getByPlaceholderText("Username");
     const passwordInput = getByPlaceholderText("Password");
 
-    // Enter username + password, then wait so the handler doesn"t see ""
+    // enter username + password then wait so the handler doesn"t see ""
     await act(async () => {
       fireEvent.changeText(usernameInput, "devuser");
       fireEvent.changeText(passwordInput, "knjaskjd");
@@ -164,12 +165,12 @@ describe("Login component", () => {
       expect(passwordInput.props.value).toBe("knjaskjd");
     });
 
-    // Then press Login
+    // then press Login
     await act(async () => {
       fireEvent.press(getByRole("button", { name: "Login" }));
     });
 
-    // Ensure we dont have an empty string
+    // ensure no empty strings
     expect(loginWithUsernamePassword).not.toHaveBeenCalledWith("", "");
     expect(loginWithUsernamePassword).toHaveBeenCalledWith(
       "devuser",

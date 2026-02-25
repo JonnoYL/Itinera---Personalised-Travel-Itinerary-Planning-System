@@ -275,7 +275,7 @@ def test_delete_itinerary_invalid_id(client):
 
 def test_full_itinerary_create(client):
     """Create new itinerary and retrieve it by ID - expect the data to match"""
-    # Create itinerary
+    # create itinerary
     test_itineraries_init(client)
     itinerary_data = {
         "name": "Test",
@@ -301,7 +301,7 @@ def test_full_itinerary_create(client):
     data = res.json()
     itinerary_id = data["id"]
 
-    # Check that the newly created itinerary exists
+    # check that the newly created itinerary exists
     res = client.get(f"/itineraries/{itinerary_id}")
     assert res.status_code == 200
     data = res.json()
@@ -309,7 +309,7 @@ def test_full_itinerary_create(client):
 
 # def test_full_itinerary_update(client):
 #     """Create new itinerary and update it, expect the new data to be returned"""
-#     # Create itinerary
+#     # create itinerary
 #     test_itineraries_init(client)
 #     itinerary_data = {
 #         "name": "Test",
@@ -335,7 +335,7 @@ def test_full_itinerary_create(client):
 #     data = res.json()
 #     itinerary_id = data["id"]
 
-#     # Update a field of the itinerary
+#     # update a field of the itinerary
 #     updated_data = {
 #         "budget": 1000
 #     }
@@ -346,7 +346,7 @@ def test_full_itinerary_create(client):
 #     )
 #     assert res.status_code == 200
 
-#     # Check that getting the itinerary returns the updated data
+#     # check that getting the itinerary returns the updated data
 #     res = client.get(f"/itineraries/{itinerary_id}")
 #     assert res.status_code == 200
 #     data = res.json()
@@ -355,7 +355,7 @@ def test_full_itinerary_create(client):
 
 def test_full_itinerary_delete(client):
     """Create new itinerary and delete it, expect it not to be found"""
-    # Create itinerary
+    # create itinerary
     test_itineraries_init(client)
     itinerary_data = {
         "name": "Test",
@@ -381,16 +381,16 @@ def test_full_itinerary_delete(client):
     data = res.json()
     itinerary_id = data["id"]
 
-    # Check that it exists
+    # check exists
     res = client.get(f"/itineraries/{itinerary_id}")
     assert res.status_code == 200
     data = res.json()
     assert data["name"] == "Test"
 
-    # Delete the itinerary
+    # delete the itinerary
     res = client.delete(f"/itineraries/{itinerary_id}")
     assert res.status_code == 204
 
-    # Check that it no longer exists
+    # check no longer exists
     res = client.get(f"/itineraries/{itinerary_id}")
     assert res.status_code == 404

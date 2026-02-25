@@ -18,6 +18,7 @@ router = APIRouter(
         404: {"description": "User not found"}
     }
 )
+
 def get_user_by_id(user_id: int, db: Session = Depends(get_db)):
     """Returns specific user by id"""
     user_repo = UserRepository(db)

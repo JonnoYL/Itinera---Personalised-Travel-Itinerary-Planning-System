@@ -4,7 +4,7 @@ import { UserProvider } from "../context/UserContext";
 import { Alert, Modal } from "react-native";
 
 jest.useRealTimers();
-// mock the navigation and auth service
+// mock the navigation and authentication service
 jest.mock("../services/auth");
 jest.mock("@react-navigation/native", () => ({
   useNavigation: jest.fn(() => ({ replace: jest.fn(), navigate: jest.fn() })),
@@ -33,7 +33,7 @@ describe("Login component real timer", () => {
       </UserProvider>,
     );
 
-    // help button exists
+    // Help button exists
     const helpButton = getByRole("button", { name: "Help" });
     expect(helpButton).toBeTruthy();
 
@@ -57,7 +57,7 @@ describe("Sign up component real timer", () => {
       </UserProvider>,
     );
 
-    // help button exists
+    // Help button exists
     const helpButton = getByRole("button", { name: "Help" });
     expect(helpButton).toBeTruthy();
 

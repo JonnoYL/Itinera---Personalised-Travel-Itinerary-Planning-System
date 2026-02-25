@@ -1,5 +1,3 @@
-// // mocks first
-
 // jest.mock('react-native-maps', () => {
 //   const React = require('react');
 //   const { View } = require('react-native');
@@ -34,7 +32,6 @@
 //   };
 // });
 
-// // imports
 // import React from 'react';
 // import { render, fireEvent, waitFor } from '@testing-library/react-native';
 // import Home from '../pages/Home/Home';
@@ -83,8 +80,6 @@
 // ];
 
 // describe("Home integration", () => {
-//   // will add more
-//   // i think they are making changes to it
 
 //   it("renders zoom buttons and toggles map type", () => {
 //     const { getByText } = render(<Home />);

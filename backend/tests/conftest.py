@@ -1,6 +1,7 @@
 # from datetime import time/
 import sys
 import os
+
 # import pandas as pd
 import pytest
 from fastapi.testclient import TestClient
@@ -9,7 +10,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 from unittest.mock import MagicMock, patch
 
-# Ensure /app is in sys.path so 'from application...' works
+# ensure /app is in sys.path so 'from application...' works
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 if project_root not in sys.path:
     sys.path.append(project_root)
@@ -65,7 +66,7 @@ def reset_test_db():
 #     pois_df = pd.read_csv(poi_path)
 
 #     pois = []
-    
+
 #     for _, row in pois_df.iterrows():
 #         open_time_hours, open_time_mins = [int(x) for x in str(row['opening_time']).split(':')]
 #         close_time_hours, closing_time_mins = [int(x) for x in str(row['closing_time']).split(':')]
@@ -103,7 +104,7 @@ def mock_ors_requests():
             mock_response.ok = True
 
             if "matrix" in url:
-                # Mock response for Matrix API
+                # mock response for Matrix API
                 coords = kwargs["json"]["locations"]
                 n = len(coords)
 
@@ -116,7 +117,7 @@ def mock_ors_requests():
                 }
 
             else:
-                # Mock response for Directions API
+                # mock response for Directions API
                 mock_response.json.return_value = {
                     "type": "FeatureCollection",
                     "features": [{

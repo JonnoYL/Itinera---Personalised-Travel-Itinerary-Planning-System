@@ -44,7 +44,7 @@ function timeLabel(t: string | undefined) {
 }
 
 // parse a time string into total minutes since midnight.
-// Supports "HH:MM:SS", "HH:MM" and ISO strings like "2025-11-18T09:00:00Z".
+// supports "HH:MM:SS", "HH:MM" and ISO strings like "2025-11-18T09:00:00Z".
 function parseTimeToMinutes(t?: string | null): number | null {
   if (!t) return null;
 
@@ -80,20 +80,20 @@ function computeTotalTimeLabels(
   let endMin: number | null = null;
 
   if (geoListData.length) {
-    // When using GeoJSON-driven list: first + last opening_time
+    // when using GeoJSON-driven list: first + last opening_time
     const firstT = geoListData[0]?.opening_time;
     const lastT = geoListData[geoListData.length - 1]?.opening_time;
     startMin = firstT ? parseTimeToMinutes(firstT) : null;
     endMin = lastT ? parseTimeToMinutes(lastT) : null;
   } else if (pois.length) {
-    // Fallback: use raw POIs (sorted by order_index)
+    // fallback: use raw POIs (sorted by order_index)
     const ordered = [...pois].sort((a, b) => a.order_index - b.order_index);
 
-    // Start time = arrival_time of the first POI that has an arrival_time
+    // start time = arrival_time of the first POI that has an arrival_time
     const firstWithArrival = ordered.find((p) => !!p.arrival_time);
     const startStr = firstWithArrival?.arrival_time ?? null;
 
-    // End time = prefer last departure_time, otherwise last arrival_time
+    // end time = prefer last departure_time otherwise last arrival_time
     const reversed = [...ordered].reverse();
     const lastWithDeparture = reversed.find((p) => !!p.departure_time);
     const lastWithArrival = reversed.find((p) => !!p.arrival_time);
@@ -163,7 +163,6 @@ export default function ItineraryDetail() {
   const route = useRoute<Route>();
   const { itineraries } = useItineraries();
   const mapRef = useRef<MapView | null>(null);
-  // Map type toggle
   const [mapType, setMapType] = useState<"standard" | "satellite">("standard");
   const currentRegionRef = useRef<Region | undefined>(undefined);
 
@@ -184,7 +183,7 @@ export default function ItineraryDetail() {
     navigation.setOptions?.({ headerShown: false });
   }, [navigation]);
 
-  // Load backend itinerary if an id is provided
+  // load backend itinerary if an id is provided
   useEffect(() => {
     let active = true;
     (async () => {
@@ -193,7 +192,6 @@ export default function ItineraryDetail() {
         if (active && data) {
           setBackendItin(data);
           const base = data.pois || [];
-          // provide POIs with details if backend didn't expand them
           if (base.length && !base[0]?.poi) {
             const all = await apiGetPOIs();
             const lookup = new Map(all.map((p) => [p.id, p]));
@@ -220,7 +218,6 @@ export default function ItineraryDetail() {
   }, [backendItin]);
 
   useEffect(() => {
-    // Initialise editable fields from backend itinerary if available
     if (backendItin) {
       const toHM = (t?: string) => (t ? t.slice(0, 5) : "");
       setEditStart(toHM(backendItin.start_time));
@@ -280,7 +277,7 @@ export default function ItineraryDetail() {
     return { latitude: lat, longitude: lon };
   }, [backendItin?.start_lat, backendItin?.start_long, backendItin?.start_loc]);
 
-  // Build route coordinates from start + POIs in order
+  // build route coordinates from start + POIs in order
   const routeCoords: LatLng[] = useMemo(() => {
     const ordered = [...pois].sort((a, b) => a.order_index - b.order_index);
     const pts: LatLng[] = [];
@@ -311,7 +308,7 @@ export default function ItineraryDetail() {
     };
   }, [routeCoords]);
 
-  // --- GeoJSON support
+  // --- GeoJSON support ---
   type GeoPointProps = {
     name?: string;
     category?: string;
@@ -388,12 +385,12 @@ export default function ItineraryDetail() {
         }
       }
     }
-    // If order present, sort by it, otherwise retain input order
+    // if order present, sort by it, otherwise retain input order
     const hasOrder = pts.every((p) => typeof p.order === "number");
     return hasOrder ? [...pts].sort((a, b) => a.order! - b.order!) : pts;
   }, [featureCollection]);
 
-  // Build list rows from GeoJSON points when available
+  // build list rows from GeoJSON points when available
   type GeoListRow = {
     key: string;
     name: string;
@@ -486,12 +483,8 @@ export default function ItineraryDetail() {
         typeof t === "number" &&
         Number.isFinite(t)
       ) {
-        // Midpoint of segment
         const midLat = (plat + clat) / 2;
         const midLon = (plon + clon) / 2;
-
-        // Offset label slightly to the side of the segment so the red line
-        // remains visible and it's clearer which leg the label refers to.
         const dLat = clat - plat;
         const dLon = clon - plon;
         const len = Math.sqrt(dLat * dLat + dLon * dLon) || 1;
@@ -510,8 +503,6 @@ export default function ItineraryDetail() {
     }
     return labels;
   }, [pois]);
-
-  // (initial fit effects added below after allCoords is defined)
 
   function formatCategoryLabel(raw?: unknown): string | undefined {
     if (!raw) return undefined;
@@ -543,7 +534,7 @@ export default function ItineraryDetail() {
     return formatCategoryLabel(catUnknown);
   }
 
-  // Fit camera to either GeoJSON geometry
+  // fit camera to either GeoJSON geometry
   useEffect(() => {
     if (!mapRef.current) return;
     const coords: LatLng[] = [];
@@ -561,7 +552,7 @@ export default function ItineraryDetail() {
     });
   }, [routeCoords, geoLineSegments, geoPoints]);
 
-  // Helper function to get all coordinates currently relevant (for Fit)
+  // helper function to get all coordinates currently relevant
   const allCoords: LatLng[] = useMemo(() => {
     const coords: LatLng[] = [];
     if (geoLineSegments.length) {
@@ -615,7 +606,7 @@ export default function ItineraryDetail() {
     )?.animateToRegion?.(region, 250);
   }, [allCoords]);
 
-  // Ensure initial view is fitted to all geometry/points when map first becomes visible
+  // ensure initial view is fitted to all geometry/points when map first becomes visible
   const didInitialFitRef = useRef(false);
   useEffect(() => {
     if (!allCoords.length || !mapRef.current) return;
@@ -625,13 +616,13 @@ export default function ItineraryDetail() {
     }
   }, [allCoords.length, fitToAll]);
   useEffect(() => {
-    // Refit whenever user switches to Map tab
+    // refit whenever user switches to Map tab
     if (view === "map" && allCoords.length && mapRef.current) {
       setTimeout(() => fitToAll(), 0);
     }
   }, [view, allCoords.length, fitToAll]);
 
-  // Zoom helpers
+  // zoom helpers
   const zoomBy = (factor: number) => {
     if (!mapRef.current) return;
     const r = currentRegionRef.current || initialRegion;
@@ -651,17 +642,17 @@ export default function ItineraryDetail() {
   const zoomIn = () => zoomBy(1.5);
   const zoomOut = () => zoomBy(1 / 1.5);
 
-  // Responsive map height (depending on device)
+  // responsive map height (depending on device)
   const mapHeight = useMemo(() => {
     const h = Dimensions.get("window").height;
-    // Reduce height so the map + cover fit without needing to scroll under navbar
+    // reduce height so the map + cover fit without needing to scroll under navigation bar
     const target = Math.floor(h * 0.45);
     return Math.max(260, Math.min(420, target));
   }, []);
 
   const toHMS = (hm: string) => {
     if (!hm) return "";
-    // Expecting HH:MM, convert to HH:MM:00
+    // expecting HH:MM convert to HH:MM:00
     const parts = hm.split(":");
     if (parts.length === 2)
       return `${parts[0].padStart(2, "0")}:${parts[1].padStart(2, "0")}:00`;
@@ -670,7 +661,7 @@ export default function ItineraryDetail() {
     return hm;
   };
 
-  // Helpers to convert HH:MM to Date and back for wheel picker
+  // helpers to convert HH:MM to Date and back for wheel picker
   const hmToDate = (hm: string | undefined): Date => {
     const base = new Date();
     if (!hm) return base;
@@ -715,7 +706,7 @@ export default function ItineraryDetail() {
 
   const HeaderSection = () => (
     <>
-      {/* Header with cover, title, budget summary */}
+      {/* header with cover, title, budget summary */}
       <View style={styles.header}>
         <Pressable
           onPress={() => navigation.goBack()}
@@ -726,7 +717,6 @@ export default function ItineraryDetail() {
         </Pressable>
         <Pressable
           onPress={() => {
-            // Refresh inputs from current state each time edit opens
             if (backendItin) {
               const toHM = (t?: string) => (t ? t.slice(0, 5) : "");
               setEditStart(toHM(backendItin.start_time));
@@ -779,7 +769,7 @@ export default function ItineraryDetail() {
           </Text>
           {totalTime.rangeLabel && (
             <Text style={styles.totalTimeRow}>
-              ({totalTime.rangeLabel}
+              {totalTime.rangeLabel}
               {totalTime.durationLabel ? `) ${totalTime.durationLabel}` : ")"}
             </Text>
           )}
@@ -814,8 +804,6 @@ export default function ItineraryDetail() {
     </>
   );
 
-  // ActionsSection removed (unused)
-
   return (
     <View style={styles.root}>
       {view === "list" ? (
@@ -845,7 +833,7 @@ export default function ItineraryDetail() {
             const costText =
               typeof visitCost === "number" && visitCost > 0
                 ? `$${visitCost.toFixed(0)}`
-                : ""; // hide $0
+                : "";
 
             return (
               <View style={styles.timelineRow}>
@@ -1019,7 +1007,7 @@ export default function ItineraryDetail() {
                           strokeColor="#F04623"
                         />
                       )}
-                  {/* Edge time labels (midpoints between consecutive POIs) */}
+                  {/* edge time labels (midpoints between consecutive POIs) */}
                   {edgeLabels.map((e, i) => (
                     <Marker
                       key={`el-${i}`}
@@ -1046,7 +1034,7 @@ export default function ItineraryDetail() {
                   </Text>
                 </View>
               )}
-              {/* Map controls overlay */}
+              {/* map controls overlay */}
               <View style={styles.mapControls}>
                 <Pressable
                   onPress={() =>
@@ -1295,7 +1283,6 @@ const styles = StyleSheet.create({
     color: "#1E1E1E",
   },
   costBreakdownRow: { color: "#8C7F7A", marginTop: 2 },
-
   tabs: {
     flexDirection: "row",
     backgroundColor: "#F3EAE6",
@@ -1307,7 +1294,6 @@ const styles = StyleSheet.create({
   tabActive: { backgroundColor: "#FFFFFF" },
   tabText: { color: "#8C7F7A" },
   tabTextActive: { color: "#1E1E1E", fontWeight: "700" },
-
   dayHeader: {
     fontSize: 16,
     fontWeight: "700",
@@ -1340,7 +1326,6 @@ const styles = StyleSheet.create({
     marginVertical: 4,
   },
   emptyText: { textAlign: "center", color: "#8C7F7A", marginVertical: 10 },
-
   mapBox: {
     backgroundColor: "#FFFFFF",
     borderRadius: 14,
@@ -1379,7 +1364,6 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     fontSize: 11,
   },
-
   block: {
     backgroundColor: "#FFFFFF",
     borderRadius: 16,
@@ -1402,7 +1386,6 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   actionBtnText: { color: "#1E1E1E", fontWeight: "600" },
-
   modalOverlay: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.35)",

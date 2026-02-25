@@ -21,7 +21,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# Access environment variables
+# access environment variables
 DEV_USERNAME = os.getenv("DEV_USERNAME")
 DEV_PASSWORD = os.getenv("DEV_PASSWORD")
 
@@ -62,8 +62,8 @@ async def lifespan(app: FastAPI):
     populate_poi_data()
     populate_poi_relationship_data()
     yield
-    # Shutdown events
-    # e.g., close database connections, clean up temporary files
+    # shutdown events
+    # e.g., close database connections, clean up temporary files etc...
 
 app = FastAPI(lifespan=lifespan)
 app.include_router(signupRouter)
@@ -81,7 +81,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-logging.basicConfig(level=logging.INFO)  # info levels are shown
+logging.basicConfig(level=logging.INFO)  # information levels are shown
 logger = logging.getLogger("backend")
 
 if __name__ == "__main__":

@@ -15,7 +15,6 @@ export default function Login() {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { setToken, setUsername: setCtxUsername, setUserId } = useUser();
-  // const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showHelp, setShowHelp] = useState(false);
@@ -76,7 +75,6 @@ export default function Login() {
           <PrimaryButton
             title="Login"
             onPress={async () => {
-              // Backend: Replace with actual login, saving token + user profile
               const loginResult = await loginWithUsernamePassword(
                 username,
                 password,
@@ -85,26 +83,20 @@ export default function Login() {
                 setLoginFailure(true);
                 return;
               }
-              // On successful login, hide keyboard before running transition
               Keyboard.dismiss();
               setToken(loginResult.token);
               setUserId(loginResult.user_id);
-              // Store username for Profile display (no backend changes required)
               setCtxUsername(username);
-              // Start form fade immediately
               Animated.timing(formOpacity, {
                 toValue: 0,
                 duration: 250,
                 useNativeDriver: true,
               }).start();
 
-              // Trigger overlay animation
               setAnimating(true);
               setHasAnimCompleted(false);
               setHasLoginResolved(false);
 
-              // Simulate login at the same time
-              // await loginWithEmailPassword(email, password);
               setHasLoginResolved(true);
               if (hasAnimCompleted) {
                 navigation.replace("MainTabs");
@@ -131,12 +123,10 @@ export default function Login() {
       </View>
       {animating && (
         <LoginTransition
-          // Hold logo on screen for a bit before navigating
           holdMs={450}
           onComplete={() => {
             setHasAnimCompleted(true);
             if (hasLoginResolved) {
-              // Replace to avoid returning to login on back
               navigation.replace("MainTabs");
             }
           }}

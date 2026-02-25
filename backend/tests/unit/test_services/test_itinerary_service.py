@@ -139,7 +139,7 @@ def test_get_itinerary_by_id_not_found(mock_repos):
 def test_create_itinerary_success(mock_repos):
     service, itinerary_repo, poi_service, poi_relationship_repo, user_repo = mock_repos
 
-    # Mock user exists
+    # mock user exists
     user_repo.get_user_by_id.return_value = {"user_id": 1, "username": "dev"}
 
     itinerary_request = ItineraryCreate(
@@ -166,7 +166,7 @@ def test_create_itinerary_success(mock_repos):
 def test_create_itinerary_invalid_budget(mock_repos):
     service, itinerary_repo, poi_service, poi_relationship_repo, user_repo = mock_repos
 
-    # Mock user exists
+    # mock user exists
     user_repo.get_user_by_id.return_value = {"user_id": 1, "username": "dev"}
 
     itinerary_request = ItineraryCreate(
@@ -194,7 +194,7 @@ def test_create_itinerary_invalid_budget(mock_repos):
 def test_create_itinerary_invalid_date(mock_repos):
     service, itinerary_repo, poi_service, poi_relationship_repo, user_repo = mock_repos
 
-    # Mock user exists
+    # mock user exists
     user_repo.get_user_by_id.return_value = {"user_id": 1, "username": "dev"}
 
     itinerary_request = ItineraryCreate(
@@ -222,7 +222,7 @@ def test_create_itinerary_invalid_date(mock_repos):
 def test_create_itinerary_invalid_end_time(mock_repos):
     service, itinerary_repo, poi_service, poi_relationship_repo, user_repo = mock_repos
 
-    # Mock user exists
+    # mock user exists
     user_repo.get_user_by_id.return_value = {"user_id": 1, "username": "dev"}
 
     itinerary_request = ItineraryCreate(
@@ -294,7 +294,7 @@ def test_generate_itinerary_success(mock_post, mock_repos):
     candidate = _poi(id=2, name="Museum", visit_cost=10.0, intrinsic=20.0, avg_visit=30, is_user_added=False)
     end_poi = _poi(id=3, name="End", visit_cost=10.0, intrinsic=20.0, avg_visit=30)
     poi_service.get_all_pois.return_value = [start_poi, candidate, end_poi]
-    
+
     service.poi_relationship_service.get_all_relationships.return_value = [
         _poi_relationship(from_id=1, to_id=2, distance_m=1000, duration_s=300, profit=20, mode="driving-car", category="Museum"),
         _poi_relationship(from_id=2, to_id=1, distance_m=1000, duration_s=300, profit=5, mode="driving-car", category="Nature"),
@@ -303,7 +303,7 @@ def test_generate_itinerary_success(mock_post, mock_repos):
         _poi_relationship(from_id=2, to_id=3, distance_m=1000, duration_s=300, profit=5, mode="driving-car", category="Nature"),
     ]
 
-    # Mock API call
+    # mock API call
     mock_response = MagicMock()
     mock_response.json.return_value = {
         "features": [{
@@ -317,8 +317,9 @@ def test_generate_itinerary_success(mock_post, mock_repos):
 
     out = service.generate_itinerary(1)
 
-    # verify stats are updated
+    # verify statistics are updated
     itinerary_repo.update_itinerary_stats.assert_called_once()
+
     # verify returns the second get_itinerary_by_id value
     assert out is generated_itinerary
 
@@ -326,7 +327,7 @@ def test_generate_itinerary_success(mock_post, mock_repos):
 def test_update_itinerary_success(mock_repos):
     service, itinerary_repo, poi_service, poi_relationship_repo, user_repo = mock_repos
 
-    # mock repo returning existing itinerary with budget $50
+    # mock repository returning existing itinerary with budget $50
     itinerary_repo.get_itinerary_by_id.return_value = _itinerary_obj(budget=50.0)
     generated = _itinerary_obj(id=1, name="generated")
 
@@ -342,7 +343,7 @@ def test_update_itinerary_success(mock_repos):
 def test_update_itinerary_end_before_start(mock_repos):
     service, itinerary_repo, poi_service, poi_relationship_repo, user_repo = mock_repos
 
-    # mock repo returning existing itinerary with start time 8am and end time 6pm
+    # mock repository returning existing itinerary with start time 8am and end time 6pm
     itinerary_repo.get_itinerary_by_id.return_value = _itinerary_obj(start_time=time(8, 0, 0), end_time=time(18, 0, 0))
 
     update_data = ItineraryUpdate(start_time=time(10, 0, 0), end_time=time(9, 0, 0))
@@ -356,7 +357,7 @@ def test_update_itinerary_end_before_start(mock_repos):
 def test_update_itinerary_generate_fail(mock_repos):
     service, itinerary_repo, poi_service, poi_relationship_repo, user_repo = mock_repos
 
-    # mock repo returning existing itinerary with budget $50
+    # mock repository returning existing itinerary with budget $50
     itinerary_repo.get_itinerary_by_id.return_value = _itinerary_obj(budget=50.0)
 
     update_data = ItineraryUpdate(budget=0)

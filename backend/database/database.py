@@ -159,7 +159,7 @@ class ItineraryDatabase:
             return True
         return False
 
-    # itinerary to poi mapping
+    # itinerary to POI mapping
     def add_pois_to_itinerary(self, itinerary_id: int, poi_details: List[dict]):
         """
         Replace the itinerary's POI sequence with the provided list.

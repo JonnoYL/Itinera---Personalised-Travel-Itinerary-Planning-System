@@ -1,4 +1,4 @@
-// // Mock navigation
+// // mock navigation
 // const mockNavigate = jest.fn();
 // const mockReplace = jest.fn();
 // jest.mock("@react-navigation/native", () => {

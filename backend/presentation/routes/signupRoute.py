@@ -25,7 +25,7 @@ router = APIRouter(
 )
 
 async def signup(request: AuthRequest, db: Session = Depends(get_db)):
-    # Blank or whitespace-only username -> 422 Validation Error
+    # blank or whitespace-only username -> 422 Validation Error
     if not request.username or not request.username.strip():
         raise HTTPException(
             status_code=422,

@@ -6,7 +6,6 @@ type Props = TextInputProps & {
 };
 
 export default function TextField(props: Props) {
-  // Styled text field used across auth, keeps colors and radius consistent with everything later on
   return (
     <View style={styles.container}>
       <TextInput
@@ -22,7 +21,6 @@ const styles = StyleSheet.create({
   container: {
     width: "100%",
     borderRadius: 12,
-    // Soft rose background
     backgroundColor: "#F0E8E4",
   },
   input: {

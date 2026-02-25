@@ -55,15 +55,6 @@ function ReviewRow({ label, value }: { label: string; value: string }) {
   );
 }
 
-/**
- * Helper to strip a Date down to "local midnight" (00:00:00.000).
- * We use this to safely compare whole calendar days without worrying
- * about hours/mins/seconds.
- *
- * For example:
- *   2025-10-27T15:30 -> 2025-10-27T00:00
- */
-
 type DateTimeModalProps = {
   visible: boolean;
   initial: Date | null;
@@ -103,7 +94,6 @@ function DateTimeModal({
               value={pickerValue}
               mode={mode === "date" ? "date" : "time"}
               display={Platform.OS === "ios" ? "spinner" : "default"}
-              // iOS-only visual controls to ensure the wheel is visible (supported on iOS)
               {...(Platform.OS === "ios"
                 ? {
                     themeVariant: "light",
@@ -117,7 +107,6 @@ function DateTimeModal({
             />
           </View>
 
-          {/* ACTION BUTTONS */}
           <View style={styles.modalActions}>
             <Pressable
               onPress={onClose}
@@ -149,10 +138,7 @@ export default function NewItinerary() {
   const compact = true;
   const insets = useSafeAreaInsets();
   const anim = useRef(new Animated.Value(0)).current;
-  // const { addItinerary } = useItineraries();
   const { token, userId } = useUser();
-
-  // Travel date + times within the same day
   const [travelDate, setTravelDate] = useState<Date | null>(null);
   const [startTime, setStartTime] = useState<Date | null>(null);
   const [endTime, setEndTime] = useState<Date | null>(null);
@@ -160,9 +146,7 @@ export default function NewItinerary() {
   const [showStartPicker, setShowStartPicker] = useState(false);
   const [showEndPicker, setShowEndPicker] = useState(false);
 
-  // Budget
   const [budget, setBudget] = useState<string>("");
-  // Create trip loading state
   const [isCreating, setIsCreating] = useState(false);
   const spinAnim = useRef(new Animated.Value(0)).current;
   const spin = useMemo(
@@ -187,7 +171,6 @@ export default function NewItinerary() {
     }
   }, [isCreating, spinAnim]);
 
-  // Load categories from backend
   useEffect(() => {
     let cancelled = false;
     (async () => {
@@ -197,19 +180,17 @@ export default function NewItinerary() {
           setCategories(list);
         }
       } catch {
-        // ignore
       }
     })();
     return () => {
       cancelled = true;
     };
   }, []);
+
   const [categories, setCategories] = useState<string[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-
   const [name, setName] = useState<string>("");
   const [description, setDescription] = useState<string>("");
-  // Flexible start/end locations for Geoapify
   const [startInput, setStartInput] = useState<string>("");
   const [startPlace, setStartPlace] = useState<GeoPlace | null>(null);
   const [endEnabled, setEndEnabled] = useState<boolean>(false);
@@ -246,7 +227,6 @@ export default function NewItinerary() {
         });
       }
     } catch {
-      // ignore picker errors
     }
   }
 
@@ -301,7 +281,6 @@ export default function NewItinerary() {
     return `${h12}:${mm} ${ampm}`;
   }
 
-  // Reset end selection when toggle off
   useEffect(() => {
     if (!endEnabled) {
       setEndInput("");
@@ -319,7 +298,6 @@ export default function NewItinerary() {
         const hh = d.getHours().toString().padStart(2, "0");
         const mm = d.getMinutes().toString().padStart(2, "0");
         const ss = d.getSeconds().toString().padStart(2, "0");
-        // Local time in HH:MM:SS (no Z, no millis)
         return `${hh}:${mm}:${ss}`;
       };
       const dateStr = (travelDate ?? new Date()).toISOString().slice(0, 10);
@@ -360,7 +338,6 @@ export default function NewItinerary() {
             ? endPlace.categories[0]
             : "tourism.sights.city_hall");
       }
-      // eslint-disable-next-line no-console
       console.log("Sending itinerary to backend:", backendPayload);
       const response = await axios.post(
         `${BASE_URL}/itineraries`,
@@ -374,7 +351,7 @@ export default function NewItinerary() {
         Alert.alert("Create failed", "Could not create itinerary.");
         return;
       }
-      // Generate route
+
       try {
         await axios.post(`${BASE_URL}/itineraries/${createdId}/generate`);
       } catch (err) {
@@ -382,19 +359,17 @@ export default function NewItinerary() {
         const detail =
           (e.response?.data as { detail?: string } | undefined)?.detail ||
           "An itinerary could not be generated";
-        // Rollback created itinerary
         try {
           await axios.delete(`${BASE_URL}/itineraries/${createdId}`);
         } catch {}
         Alert.alert("Generation failed", String(detail));
         return;
       }
-      // Success
+
       // @ts-expect-error typed in HomeStackParamList
       navigation.replace("ItineraryDetail", { backendId: createdId });
     } catch (e) {
       const err = e as AxiosError<unknown>;
-      // eslint-disable-next-line no-console
       console.error("Itinerary create/generate failed:", err);
       Alert.alert("Error", "Create failed.");
     } finally {
@@ -402,7 +377,6 @@ export default function NewItinerary() {
     }
   };
 
-  // Animate between steps
   useEffect(() => {
     anim.setValue(0);
     Animated.timing(anim, {
@@ -486,7 +460,7 @@ export default function NewItinerary() {
         <View style={styles.centerWrap}>
           {compact && !reviewMode && (
             <Animated.View style={fadeStyle}>
-              {/* Trip name */}
+              {/* Trip Name */}
               <Text
                 style={[
                   styles.subtleLbl,
@@ -764,6 +738,7 @@ export default function NewItinerary() {
                     : "Select categories"}
                 </Text>
               </Pressable>
+
               {/* Cover Photo (single) */}
               <View style={{ height: 10 }} />
               <Text
@@ -924,7 +899,6 @@ export default function NewItinerary() {
             </Animated.View>
           )}
 
-          {/* Original step layout (hidden when compact) */}
           {!compact && (
             <>
               {(combineSteps || step === 0) && (
@@ -1391,9 +1365,7 @@ export default function NewItinerary() {
         mode="time"
       />
 
-      {/* End suggestions */}
-
-      {/* Start location modal with autosuggest */}
+      {/* start location modal with autosuggest */}
       <Modal
         visible={showStartLocModal}
         transparent
@@ -1432,7 +1404,7 @@ export default function NewItinerary() {
         </View>
       </Modal>
 
-      {/* End location modal with autosuggest */}
+      {/* end location modal with autosuggest */}
       <Modal
         visible={showEndLocModal}
         transparent
@@ -1471,7 +1443,7 @@ export default function NewItinerary() {
         </View>
       </Modal>
 
-      {/* Categories modal */}
+      {/* categories modal */}
       <Modal
         visible={showCategoriesModal}
         transparent
@@ -1549,7 +1521,7 @@ export default function NewItinerary() {
         </View>
       </Modal>
 
-      {/* Footer action */}
+      {/* footer action */}
       {!compact && (
         <View style={styles.footerNav}>
           {combineSteps ? (
@@ -1637,7 +1609,9 @@ export default function NewItinerary() {
 }
 
 const styles = StyleSheet.create({
+
   root: { flex: 1, backgroundColor: "#FFF8F5" },
+
   scroll: {
     padding: 16,
     paddingBottom: 120,
@@ -1651,8 +1625,10 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     color: "#1E1E1E",
   },
+
   centerWrap: { width: "100%", maxWidth: 360, alignSelf: "center" },
   section: { marginBottom: 24 },
+
   stepHeaderRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -1668,9 +1644,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginRight: 8,
   },
+
   sectionTitle: { fontSize: 20, fontWeight: "700", color: "#1E1E1E" },
   chevron: { fontSize: 18, color: "#8C7F7A" },
   row: { marginBottom: 12 },
+
   inputButton: {
     height: 44,
     borderRadius: 10,
@@ -1680,7 +1658,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingHorizontal: 12,
   },
+
   inputButtonText: { color: "#1E1E1E", fontSize: 16 },
+
   textInput: {
     height: 44,
     borderRadius: 10,
@@ -1691,8 +1671,10 @@ const styles = StyleSheet.create({
     color: "#1E1E1E",
     fontSize: 16,
   },
+
   placeholderText: { color: "#8C7F7A" },
   chipsRow: { flexDirection: "row", flexWrap: "wrap", gap: 10 },
+
   chip: {
     paddingHorizontal: 16,
     paddingVertical: 10,
@@ -1703,10 +1685,12 @@ const styles = StyleSheet.create({
     marginRight: 8,
     marginBottom: 8,
   },
+
   chipSelected: { backgroundColor: "#FFE1D8", borderColor: "#F04623" },
   chipText: { color: "#1E1E1E" },
   chipTextSelected: { color: "#F04623", fontWeight: "700" },
   helper: { color: "#D44B3A", marginTop: 6, textAlign: "center" },
+
   review: {
     marginTop: 20,
     paddingTop: 10,
@@ -1721,7 +1705,9 @@ const styles = StyleSheet.create({
     color: "#1E1E1E",
     textAlign: "center",
   },
+
   reviewSub: { color: "#8C7F7A", marginBottom: 20, textAlign: "center" },
+
   reviewRow: {
     flex: 1,
     flexDirection: "row",
@@ -1729,8 +1715,10 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingVertical: 10,
   },
+
   reviewLabel: { color: "#1E1E1E", fontWeight: "700", marginRight: 8 },
   reviewValue: { color: "#1E1E1E", flexShrink: 1 },
+
   reviewIconRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -1764,8 +1752,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     flex: 1,
   },
+
   createBtnDisabled: { backgroundColor: "#F7A892" },
   createBtnText: { color: "#fff", fontWeight: "700", fontSize: 16 },
+
   nextBtn: {
     flexDirection: "row",
     alignItems: "center",
@@ -1776,7 +1766,9 @@ const styles = StyleSheet.create({
     borderRadius: 22,
     minWidth: 120,
   },
+
   nextBtnText: { color: "#fff", fontWeight: "700", marginRight: 6 },
+
   circleBtn: {
     width: 44,
     height: 44,
@@ -1786,9 +1778,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginRight: 12,
   },
+
   circleBtnDisabled: { backgroundColor: "#EFE7E3" },
 
-  // ===== Calendar / Modal styles =====
+  // ===== Calendar / Modal Styles =====
   modalOverlay: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.35)",
@@ -1815,7 +1808,9 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginBottom: 6,
   },
+
   calHeaderText: { fontWeight: "600", color: "#1E1E1E" },
+
   calNavBtn: {
     width: 36,
     height: 36,
@@ -1824,7 +1819,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  // Slightly dimmed style for the "previous month" button when disabled
   calNavBtnDisabled: {
     backgroundColor: "#EFE7E3",
   },
@@ -1833,7 +1827,9 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginBottom: 4,
   },
+
   weekCell: { width: 36, textAlign: "center", color: "#8C7F7A" },
+
   grid: {
     flexDirection: "row",
     flexWrap: "wrap",
@@ -1862,6 +1858,7 @@ const styles = StyleSheet.create({
 
   subtleLbl: { color: "#8C7F7A", textAlign: "center" },
   timeGridWrap: { paddingHorizontal: 4 },
+
   timeGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
@@ -1876,6 +1873,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#E6DCD8",
   },
+
   timeChipSelected: { backgroundColor: "#FFE1D8", borderColor: "#F04623" },
   timeChipText: { color: "#1E1E1E" },
   timeChipTextSelected: { color: "#F04623", fontWeight: "700" },

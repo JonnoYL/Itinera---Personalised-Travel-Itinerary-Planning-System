@@ -34,7 +34,7 @@ class POIRelationshipService:
             if new_start or new_end:
                 print("Adding new relationship edges for new user-defined start/end POIs...")
 
-                # Build ordered list so that new POIs come first
+                # build ordered list so that new POIs come first
                 new_pois = [p for p in (new_start, new_end) if p]
                 req_list = new_pois + existing_pois
                 coords = [[poi.longitude, poi.latitude] for poi in req_list]
@@ -55,7 +55,7 @@ class POIRelationshipService:
 
                 relationships = []
 
-                # new --> existing edges
+                # new -> existing edges
                 for src_idx, new_poi in enumerate(new_pois):
                     for j, to_poi in enumerate(existing_pois):
                         if new_poi != to_poi:
@@ -70,7 +70,7 @@ class POIRelationshipService:
                             )
                         )
 
-                # existing → new edges
+                # existing -> new edges
                 for j, from_poi in enumerate(existing_pois):
                     for src_idx, new_poi in enumerate(new_pois):
                         if from_poi != new_poi:
@@ -85,7 +85,7 @@ class POIRelationshipService:
                             )
                         )
 
-                # new → new edges (if multiple new POIs)
+                # new -> new edges (if multiple new POIs)
                 if len(new_pois) > 1:
                     for i, from_poi in enumerate(new_pois):
                         for j, to_poi in enumerate(new_pois):
@@ -107,7 +107,7 @@ class POIRelationshipService:
                 print(f"Inserted {len(relationships)} new edges")
                 return
 
-            # Full matrix mode (done on population)
+            # full matrix mode (done on population)
             coords = [[poi.longitude, poi.latitude] for poi in existing_pois]
             res = requests.post(
                 url,

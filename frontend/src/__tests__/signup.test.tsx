@@ -40,7 +40,7 @@ describe("Signup component", () => {
       </NavigationContainer>,
     );
 
-    // look for a button with the accessible name "SignUp"
+    // look for button with the accessible name "SignUp"
     const loginButton = getByRole("button", { name: "Sign Up" });
 
     expect(loginButton).toBeTruthy();
@@ -65,8 +65,9 @@ describe("Signup component", () => {
     const passwordInput = getByPlaceholderText("Password");
     const confirmPasswordInput = getByPlaceholderText("Confirm Password");
 
-    // Enter username + password, then wait. React state updates are async, so
-    // pressing Login in the same tick can capture "" values in the handler.
+    // enter username + password, then wait
+    // React state updates are async
+    // pressing Login in the same tick can capture "" values in the handler
     await act(async () => {
       fireEvent.changeText(usernameInput, "user");
       fireEvent.changeText(passwordInput, "notthesame");
@@ -79,7 +80,7 @@ describe("Signup component", () => {
       expect(confirmPasswordInput.props.value).toBe("same");
     });
 
-    // Now we press Login after inputs reflect the new values
+    // press Login after inputs reflect the new values
     await act(async () => {
       fireEvent.press(getByRole("button", { name: "Sign Up" }));
     });

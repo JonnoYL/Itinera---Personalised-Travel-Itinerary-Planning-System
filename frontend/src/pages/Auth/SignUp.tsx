@@ -120,30 +120,24 @@ export default function SignUp() {
           <PrimaryButton
             title="Sign Up"
             onPress={async () => {
-              // reset errors for this attempt
               setIsPasswordMismatch(false);
               setIsPasswordTooShort(false);
               setSameUsername(false);
               setIsInvalidUsername(false);
 
-              // 1. Still block on password mismatch (purely client-side)
               if (password !== confirmedPassword) {
                 setIsPasswordMismatch(true);
                 await signUpWithUsernamePassword("", password);
                 return;
               }
 
-              // 2. For "too short" password, show the message BUT DO NOT RETURN.
-              //    This allows the backend to receive the request and return 422.
               if (password.length < 8) {
                 setIsPasswordTooShort(true);
-                // important: no `return` here
               }
 
               const pwdTooShort = password.length < 8;
               if (pwdTooShort) {
                 setIsPasswordTooShort(true);
-                // Still call backend so it returns 422 and logs in the terminal
                 await signUpWithUsernamePassword(username, password);
                 return;
               }
@@ -154,13 +148,11 @@ export default function SignUp() {
                   password,
                 );
 
-                // 400: "Username already exists" -> null -> show "Username is taken"
                 if (!signupResult) {
                   setSameUsername(true);
                   return;
                 }
 
-                // Success (unchanged)
                 Keyboard.dismiss();
                 setToken(signupResult.token);
                 setUserId(signupResult.user_id);
@@ -183,12 +175,10 @@ export default function SignUp() {
               } catch (err) {
                 const axiosError = err as AxiosError<SignupErrorResponse>;
 
-                // 422 Validation Error from backend
                 if (axiosError.response?.status === 422) {
                   const detail = axiosError.response.data?.detail;
                   const items = Array.isArray(detail) ? detail : [];
 
-                  // Look at the validation errors to see which field failed.
                   const hasUsernameError = items.some(
                     (d) => Array.isArray(d?.loc) && d.loc.includes("username"),
                   );
@@ -205,9 +195,6 @@ export default function SignUp() {
 
                   return;
                 }
-
-                // Other errors (network, 5xx, etc.) – optionally log, no UI change
-                // console.error("Signup failed:", axiosError);
               }
             }}
           />
@@ -231,12 +218,10 @@ export default function SignUp() {
       </View>
       {animating && (
         <LoginTransition
-          // Hold logo on screen for a bit before navigating
           holdMs={450}
           onComplete={() => {
             setHasAnimCompleted(true);
             if (hasLoginResolved) {
-              // Replace to avoid returning to login on back
               navigation.replace("MainTabs");
             }
           }}

@@ -25,12 +25,10 @@ export default function Profile() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Profile</Text>
-      {/* Backend: wire up avatar picker/upload and persist avatar URL */}
       <Pressable
         style={{ alignItems: "center" }}
         onPress={async () => {
           if (Platform.OS === "web") {
-            // Web: use a hidden file input instead of expo-image-picker
             const input = document.createElement("input");
             input.type = "file";
             input.accept = "image/*";
@@ -39,7 +37,6 @@ export default function Profile() {
               if (file) {
                 const url = URL.createObjectURL(file);
                 setAvatarUri(url);
-                // Backend: upload file and replace with persisted URL
               }
             };
             input.click();
@@ -59,10 +56,8 @@ export default function Profile() {
             });
             if (!result.canceled) {
               setAvatarUri(result.assets[0].uri);
-              // Backend: Upload this image and save returned URL instead
             }
           } catch {
-            // If expo-image-picker isn't installed on native, silently ignore
             return;
           }
         }}
@@ -80,7 +75,6 @@ export default function Profile() {
       <Text style={styles.name}>{username || fullName}</Text>
 
       <View style={{ height: 24 }} />
-      {/* Backend: clear token client-side and call sign-out */}
       <PrimaryButton
         title="Log Out"
         onPress={() => {

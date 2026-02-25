@@ -27,7 +27,7 @@ def get_route(
         - ORS response missing expected geometry/waypoints
     """
 
-    # Prepare output: add each POI as a Point feature
+    # prepare output: add each POI as a point feature
     features = []
     for idx, poi in enumerate(pois):
         features.append({
@@ -47,13 +47,13 @@ def get_route(
     # ORS "coordinates" input format: [[lon, lat], [lon, lat], ...]
     coords = [[poi["lon"], poi["lat"]] for poi in pois]
 
-    # Attempt a single ORS API call for full route geometry
+    # attempt single ORS API call for full route geometry
     use_fallback = False
     polyline = None
     waypoints = None
     try:
         if not API_KEY:
-            # Fallback to straight line
+            # fallback to straight line
             use_fallback = True
 
         url = f"{ORS_BASE_URL}/driving-car/geojson"
@@ -76,12 +76,12 @@ def get_route(
                 polyline = feature0["geometry"]["coordinates"]
                 waypoints = feature0["properties"]["way_points"]
     except Exception:
-        # Any error -> fallback
+        # any error -> fallback
         use_fallback = True
 
     use_fallback = not polyline or not waypoints
 
-    # Build route leg LineString features
+    # build route leg LineString features
     for i in range(len(pois) - 1):
         poi_a = pois[i]
         poi_b = pois[i + 1]
@@ -90,7 +90,7 @@ def get_route(
         dur_min = duration_lookup.get((poi_a["id"], poi_b["id"]), 0)
 
         if use_fallback:
-            # Straight line between the two points as a minimal geometry
+            # straight line between the two points as a minimal geometry
             leg_geom = {
                 "type": "LineString",
                 "coordinates": [
@@ -99,7 +99,7 @@ def get_route(
                 ],
             }
         else:
-            # Extract route segment between ORS waypoint indices
+            # extract route segment between ORS waypoint indices
             start_idx = waypoints[i]
             end_idx = waypoints[i + 1]
             leg_geom = {
@@ -119,7 +119,7 @@ def get_route(
             "geometry": leg_geom,
         })
 
-    # Return final GeoJSON FeatureCollection
+    # return final GeoJSON FeatureCollection
     feature_collection = {
         "type": "FeatureCollection",
         "features": features,

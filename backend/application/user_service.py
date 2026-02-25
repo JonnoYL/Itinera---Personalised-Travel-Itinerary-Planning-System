@@ -65,21 +65,21 @@ class UserService:
                 detail="Password must be at least 8 characters long"
             )
 
-        # Hash password
+        # hash password
         password_hash = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
 
         user_dict = {'username': username, 'password_hash': password_hash}
 
-        # Insert user in database
+        # insert user in database
         try:
             new_user = self.user_repo.create_user(user_dict)
         except Exception as e:
             print(e)
             raise HTTPException(status_code=500, detail='Database Error')
 
-        # Generate JWT token, expires in an hour
+        # generate JWT token, expires in an hour
         payload = {
-            "sub": str(new_user.user_id), # a string to satisfy PyJWT's subject validation
+            "sub": str(new_user.user_id), # string to satisfy PyJWT's subject validation
             "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=1),
         }
         token = jwt.encode(payload, JWT_SECRET, algorithm=ALGORITHM)
@@ -97,13 +97,13 @@ class UserService:
                 detail="No such username"
             )
 
-         # Verify password against hash
+         # verify password against hash
         if not bcrypt.checkpw(
             password.encode("utf-8"), user.password_hash.encode("utf-8")
         ):
             raise HTTPException(status_code=400, detail="Incorrect password")
 
-        # Generate JWT token, expires in an hour
+        # generate JWT token, expires in an hour
         payload = {
             "sub": str(user.user_id), # a string to satisfy PyJWT's subject validation
             "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=1),

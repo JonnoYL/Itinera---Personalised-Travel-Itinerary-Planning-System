@@ -78,7 +78,7 @@ export default function ItinerariesList() {
         />
       )}
 
-      {/* New Itinerary button */}
+      {/* New Itinerary Button */}
       <Pressable
         accessibilityRole="button"
         onPress={() => navigation.navigate("NewItinerary")}
@@ -114,16 +114,11 @@ export default function ItinerariesList() {
                 onPress={async () => {
                   if (pendingDeleteId !== null) {
                     const id = pendingDeleteId;
-
-                    // Call backend DELETE /itineraries/{id}
                     const ok = await apiDeleteItinerary(id);
 
-                    // Keep local/context state in sync if delete succeeded
                     if (ok) {
                       deleteItinerary(id.toString());
                     }
-
-                    // Refresh list from backend either way
                     await load();
                   }
                   setPendingDeleteId(null);

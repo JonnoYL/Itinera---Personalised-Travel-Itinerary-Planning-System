@@ -69,7 +69,6 @@ export default function LocationAutocomplete({
         if (latestQuery.current !== q) return;
         const pickBest = (cats?: string[]) => {
           if (!Array.isArray(cats) || cats.length === 0) return undefined;
-          // Prefer the most specific (most segments / longest)
           const sorted = [...cats].sort((a, b) => {
             const ad = (a.match(/\./g) || []).length;
             const bd = (b.match(/\./g) || []).length;

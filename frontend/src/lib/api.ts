@@ -19,7 +19,6 @@ export async function apiGetItinerary(
 export async function apiGetPOIs(): Promise<BackendPOI[]> {
   try {
     const { data } = await axios.get(`${BASE_URL}/pois`);
-    // eslint-disable-next-line no-console
     console.log(
       "/pois loaded",
       Array.isArray(data) ? data.length : 0,
@@ -32,7 +31,6 @@ export async function apiGetPOIs(): Promise<BackendPOI[]> {
       response?: { status?: number };
       message?: string;
     };
-    // eslint-disable-next-line no-console
     console.log(
       "/pois failed",
       err?.response?.status,
@@ -51,7 +49,6 @@ export async function apiGetPoiCategories(): Promise<string[]> {
     return [];
   } catch (e) {
     const err = e as { response?: { status?: number }; message?: string };
-    // eslint-disable-next-line no-console
     console.log(
       "/pois/categories failed",
       err?.response?.status,
@@ -77,12 +74,10 @@ export async function apiUpdateItinerary(
       `${BASE_URL}/itineraries/${id}`,
       payload,
     );
-    // eslint-disable-next-line no-console
     console.log("patch /itineraries/", id, "->", data);
     return true;
   } catch (err) {
     const e = err as AxiosError;
-    // eslint-disable-next-line no-console
     console.log("patch failed", e.response?.status, e.response?.data);
     return false;
   }
@@ -92,18 +87,15 @@ export async function apiGenerateItinerary(
   id: number,
 ): Promise<BackendItinerary | null> {
   try {
-    // Backend registers /itineraries/{id}/generate – call this first
     const first = await axios
       .post(`${BASE_URL}/itineraries/${id}/generate`)
       .then((r) => r.data as BackendItinerary)
       .catch((err: AxiosError) => {
-        // eslint-disable-next-line no-console
         console.log(
           "generate (slash) failed",
           err.response?.status,
           err.response?.data,
         );
-        // Only try alternate path if the first error was a 404
         if (err.response?.status === 404) return null;
         throw err;
       });
@@ -112,7 +104,6 @@ export async function apiGenerateItinerary(
     return data as BackendItinerary;
   } catch (err) {
     const e = err as AxiosError | Error;
-    // eslint-disable-next-line no-console
     console.log(
       "generate failed",
       (e as AxiosError).response?.status,
@@ -148,11 +139,9 @@ export async function apiGetUserById(
 
 export async function apiDeleteItinerary(id: number): Promise<boolean> {
   try {
-    // BASE_URL is already defined at the top of this file and used by other APIs
     await axios.delete(`${BASE_URL}/itineraries/${id}`);
-    return true; // 2xx – successful delete
+    return true;
   } catch (err) {
-    // eslint-disable-next-line no-console
     console.error("Failed to delete itinerary", err);
     return false;
   }

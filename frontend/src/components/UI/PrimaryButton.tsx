@@ -28,7 +28,6 @@ export default function PrimaryButton({
   textStyle,
   testID,
 }: Props) {
-  // Choose a background style for the current variant
   const variantStyle =
     variant === "primary"
       ? styles.primary
@@ -53,7 +52,7 @@ export default function PrimaryButton({
       onPress={onPress}
       disabled={disabled}
     >
-      {/* Render the title with contrasting text color */}
+      {/* render the title with contrasting text color */}
       <Text style={[styles.textBase, variantTextStyle, textStyle]}>
         {title}
       </Text>
@@ -84,7 +83,6 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   primary: {
-    // Orange brand color
     backgroundColor: "#F04623",
   },
   secondary: {

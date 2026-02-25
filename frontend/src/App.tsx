@@ -45,8 +45,6 @@ export default function App() {
             <Stack.Screen name="NewItinerary" component={NewItinerary} />
             <Stack.Screen name="ItineraryDetail" component={ItineraryDetail} />
             <Stack.Screen name="EditItinerary" component={EditItinerary} />
-            {/* EditInterests is now inside ProfileStack; keep this for backward nav if any links rely on it */}
-            {/* <Stack.Screen name="EditInterests" component={EditInterests} /> */}
           </Stack.Navigator>
         </NavigationContainer>
       </ItineraryProvider>

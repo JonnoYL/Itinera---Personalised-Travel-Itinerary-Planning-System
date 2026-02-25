@@ -16,7 +16,7 @@ def test_signup_empty_username(client):
     }
 
     res = client.post("/auth/signup", json=user_data)
-    # should return 422 validation error as username should be at least 1 char
+    # should return 422 validation error as username should be at least 1 character
     assert res.status_code == 422
 
 def test_signup_empty_pwd(client):
@@ -118,7 +118,7 @@ def test_login_empty_both(client):
     }
 
     res = client.post("/auth/login", json=user_data)
-    # returns 422 validation error as username and pwd are both too short
+    # returns 422 validation error as username and password are both too short
     assert res.status_code == 422
 
 def test_login_empty_wrong_pwd(client):
@@ -197,7 +197,7 @@ def test_login_validation_error(client):
 
 def test_full_user_signup_flow(client):
     """Tests a full user signup flow, including sign up and retrieving the user"""
-    # Signup
+    # signup
     user_data = {
         "username": "user1",
         "password": "password1"
@@ -207,7 +207,7 @@ def test_full_user_signup_flow(client):
     data = res.json()
     user_id = data["user_id"]
 
-    # Retrieve user details
+    # retrieve user details
     res = client.get(f"/users/{user_id}")
     assert res.status_code == 200
     data = res.json()

@@ -30,7 +30,7 @@ class ItineraryDatabaseModel(Base):
     end_time = Column(Time, nullable=False)
     categories = Column(ARRAY(String), nullable=True)
 
-    # Computed stats after route generation
+    # computed statistics after route generation
     total_time = Column(Float, nullable=True)
     total_cost = Column(Float, nullable=True)
     total_distance = Column(Float, nullable=True)
@@ -38,8 +38,7 @@ class ItineraryDatabaseModel(Base):
 
     user = relationship("UserDatabaseModel", back_populates="itineraries", lazy="joined")
 
-    # Virtual relationship to join table
-    # doesn't actually have a pois column
+    # virtual relationship to join table
     pois = relationship(
         "ItineraryPOI",
         back_populates="itinerary",
@@ -49,14 +48,14 @@ class ItineraryDatabaseModel(Base):
 
     feature_collection = Column(JSON, nullable=True)
 
-# Join table
+# join table
 class ItineraryPOI(Base):
     __tablename__ = "itinerary_pois"
 
     id = Column(Integer, primary_key=True, index=True)
     itinerary_id = Column(Integer, ForeignKey("itineraries.id", ondelete="CASCADE"))
     poi_id = Column(Integer, ForeignKey("pois.id"))
-    order_index = Column(Integer, nullable=False)  # order of pois
+    order_index = Column(Integer, nullable=False)
 
     arrival_time = Column(Time, nullable=True)
     departure_time = Column(Time, nullable=True)
