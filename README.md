@@ -4,74 +4,68 @@
 
 ### Before Beginning:
 
-Internet Connection:
+Check Internet Connection:
 
-- Ensure a stable network connection for package downloads
-- Ensure laptop and phone are connected to same Wi-Fi network
-- Note: activating Hotspot on phone and allowing laptop to connect to phone Hotspot is recommended for testing purposes
+- Ensure that there is a stable network connection for package downloads
+- Ensure that the laptop and phone are both connected to the same Wi-Fi network
 
-Download Expo Go on iPhone:
+Download Expo Go on Phone (iPhone):
 
-1. Open App Store
+1. Open the App Store
 2. Search for Expo Go
 3. Download Expo Go
-4. Open Expo Go + allow all permissions
-5. Register / Sign Into Expo Go
+4. Open Expo Go
+5. Allow all permissions
+6. Register an account for Expo Go
 
 ### This guide will walk through:
 - Installing Homebrew
 - Installing Node.js and npm
 - Installing Python (correct version)
-- Changing Python Version (if previously installed)
-- Setting up .env file
-- Setting up Database
-- Frontend Installation
-- Backend Installation
-- Running Application
-- Frontend Manual Unit Testing
+- Changing Python to the correct version (if previously installed)
+- Setting up the .env file
+- Setting up the database
+- Frontend installation
+- Backend installation
+- Running the application
+- Frontend manual testing
+- Backend manual testing
 
 ### 1. Installing Homebrew
 
 Skip this step if completed
 
-1. To install Homebrew:
-https://brew.sh
-
-2. Copy and paste following command into terminal:
-
-```
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-```
+- Visit the provided link below and follow the instructions: https://brew.sh
 
 ### 2. Installing Node.js and npm
 
-1. To install Node.js and npm
-https://nodejs.org/en/download
+Skip this step if completed
 
-2. Download macOS Installer (.pkg) file
+1. Visit the provided link below: https://nodejs.org/en/download
 
-3. Open downloaded .pkg file and follow instructions
+2. Download the macOS Installer (.pkg) file
+
+3. Open the macOS Installer (.pkg) file and follow the instructions
 
 ### 3. Installing Python
 
 Skip this step if completed
 
-1. To install Python:
-https://www.python.org/downloads/
+1. Visit the provided link below: https://www.python.org/downloads/
 
-2. Scroll down and download Python 3.13.9 file under Looking for a specific release?
+2. Scroll down and download the Python 3.13.9 file under Looking for a specific release?
 
-3. Open downloaded Python 3.13.9 file and follow instructions
+3. Open the Python 3.13.9 file and follow the instructions
 
-### 4. Changing Python Version Using pyenv
+### 4. Changing Python to the correct version
 
-1. Check Python Version
+1. Check the Python version
 
 ```
-python --version
+python3 --version
 ```
 
-If Python Version is 3.13.9, skip this step
+If the Python version is 3.13.9, skip this step
 
 2. Install pyenv
 
@@ -89,19 +83,19 @@ echo 'eval "$(pyenv init --path)"' >> ~/.zshrc
 echo 'eval "$(pyenv init -)"' >> ~/.zshrc
 ```
 
-4. Reload shell
+4. Reload the shell
 
 ```
 source ~/.zshrc
 ```
 
-5. Check what versions are available
+5. Check what Python versions are available
 
 ```
 pyenv install -l | grep "3.13"
 ```
 
-6. Install Python 3.13.9 and make it default
+6. Install Python 3.13.9 and make Python 3.13.9 the default version
 
 ```
 pyenv install 3.13.9
@@ -109,30 +103,34 @@ pyenv global 3.13.9
 pyenv rehash
 ```
 
-7. Verify
+7. Verify the installation
 
 ```
-python --version
 python3 --version
 ```
 
-Both should show 3.13.9.
+Note: 3.13.9 should be outputted.
 
-### 5. Set Up .env file
+### 5. Setting up the .env file
 
-1. In root directory of codebase, create a ".env" file
+1. Create a .env file in the root directory of the codebase
 
-2. Copy and Paste .env information in root directory .env file
+```
+code .env
+```
 
-3. In frontend directory of codebase, create a ".env" file
+2. Copy and paste the .env information from the project report into the root directory .env file
+
+3. Create a .env file in the frontend directory of the codebase
 
 ```
 cd capstone-project-25t3-3900-h13a-banana/frontend/
+code .env
 ```
 
-4. Copy and Paste .env information in frontend directory .env file
+4. Copy and paste the .env information from the project report into the frontend directory .env file
 
-5. Find your Computer/Mac's LAN IP
+5. Find the Computer/Mac's LAN IP
 
 ```
 ipconfig getifaddr en0
@@ -140,13 +138,7 @@ ipconfig getifaddr en0
 
 Example Output: 192.168.68.51
 
-Or check active interface
-
-6. In frontend .env file, add LAN IP output to EXPO_PUBLIC_API_URL
-
-```
-EXPO_PUBLIC_API_URL=http://<your-mac-ip>:8000
-```
+6. Add the LAN IP output to EXPO_PUBLIC_API_URL into the frontend directory .env file
 
 E.g.
 
@@ -154,9 +146,9 @@ E.g.
 EXPO_PUBLIC_API_URL=http://192.168.68.51:8000
 ```
 
-### 6. Setting Up Database
+### 6. Setting up the database
 
-1. In root directory, download PostgreSQL via Homebrew
+1. Download PostgreSQL via Homebrew in the root directory of the codebase
 
 ```
 brew install postgresql
@@ -168,9 +160,9 @@ brew install postgresql
 brew services start postgresql@14
 ```
 
-3. Open PostgreSQL to create Database
+3. Open PostgreSQL to create the Database
 
-Note: Replace all instances of {POSTGRES_USER}, {POSTGRES_PASSWORD}, {POSTGRES_DB} with actual values from root directory .env file
+Note: Replace all instances of {POSTGRES_USER}, {POSTGRES_PASSWORD}, {POSTGRES_DB} with the actual values from the root directory .env file
 
 ```
 psql postgres
@@ -188,7 +180,7 @@ postgres=# GRANT ALL PRIVILEGES ON DATABASE {POSTGRES_DB} TO {POSTGRES_USER};
 \q
 ```
 
-4. Verify setting up Database
+4. Verify setting up the Database
 
 ```
 psql -U admin -d users
@@ -197,113 +189,102 @@ psql -U admin -d users
 \q
 ```
 
-### 7. Frontend Installation
+### 7. Frontend installation
 
-1. Change directory to frontend directory
+1. Navigate to the frontend directory
 
 ```
 cd capstone-project-25t3-3900-h13a-banana/frontend/
 ```
 
-2. Install project dependencies
+2. Install the project dependencies
 
 ```
 npm install
 ```
 
-### 8. Backend Installation
+### 8. Backend installation
 
-1. Change directory to backend directory
+1. Navigate to the backend directory
 
 ```
 cd capstone-project-25t3-3900-h13a-banana/backend/
 ```
 
-2. Install project dependencies
-
-```
-pip install -r requirements.txt
-```
-
-or if above command does not work
+2. Install the project dependencies
 
 ```
 pip3 install -r requirements.txt
 ```
 
-### 9. Running Application
+### 9. Running the application
 
 1. Create 2 terminal windows
 
-2. In first terminal window, change directory to backend directory
+2. Navigate to the backend directory in the first terminal window
 
 ```
 cd capstone-project-25t3-3900-h13a-banana/backend/
 ```
 
-3. Run backend
-
-```
-python main.py
-```
-
-or if above command does not work
+3. Run the backend
 
 ```
 python3 main.py
 ```
 
-Open `localhost:8000/docs` on any browser and a swagger document should be shown listing existing API routes.
+Open `localhost:8000/docs` on any browser and a swagger document should be shown listing the existing API routes
 
-4. In second terminal window, change directory to frontend directory
+4. Navigate to the frontend directory in the second terminal window
 
 ```
 cd capstone-project-25t3-3900-h13a-banana/frontend/
 ```
 
-5. Run frontend
+5. Run the frontend
 
 ```
 npx expo start
 ```
 
-6. Open Camera Application on phone, scan QR code displayed on frontend terminal window and follow link
+6. 
 
-This will automatically open Expo Go and launch application
+a. Open the camera application on the phone
+b. Scan the QR code that is displayed on the frontend terminal window
+c. Follow the link to open Expo Go and launch the application
 
-### 10. Frontend Manual Testing
+### 10. Frontend manual testing
 
-1. Ensure frontend is running
+1. Ensure the frontend is running
 
-2. Create another terminal window and change directory to frontend
+2. Create another terminal window and navigate to the frontend directory
 
 ```
 cd capstone-project-25t3-3900-h13a-banana/frontend/
 ```
 
-3. Run
+3. Run the command:
 
 ```
 npm run test:coverage
 ```
 
-4. Review test output and coverage summary in Terminal.
+4. Review the test output and coverage summary in the terminal
 
-### 11. Backend Manual Testing
+### 11. Backend manual testing
 
-1. Create another terminal window and change directory to frontend
+1. Ensure the backend is running
+
+2. Create another terminal window and navigate to the backend directory
 
 ```
 cd capstone-project-25t3-3900-h13a-banana/backend/
 ```
 
-2. Run
+3. Run the command:
 
 ```
 pytest --cov=. --cov-report=term
 ```
-3. Review test output and coverage summary in Terminal.
 
-
-
-[![Open in Visual Studio Code](https://classroom.github.com/assets/open-in-vscode-2e0aaae1b6195c2367325f4f02e2d04e9abb55f0b24a779b69b11b9e10269abc.svg)](https://classroom.github.com/online_ide?assignment_repo_id=20570623&assignment_repo_type=AssignmentRepo)
+3. Review the test output and coverage summary in the terminal
