@@ -291,4 +291,4 @@ cd capstone-project-25t3-3900-h13a-banana/backend/
 pytest --cov=. --cov-report=term
 ```
 
-3. Review the test output and coverage summary in the terminal
+4. Review the test output and coverage summary in the terminal
