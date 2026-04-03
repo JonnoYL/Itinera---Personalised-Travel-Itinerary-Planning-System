@@ -247,11 +247,11 @@ cd capstone-project-25t3-3900-h13a-banana/frontend/
 npx expo start
 ```
 
-6. 
+6. Open the camera application on the phone
 
-a. Open the camera application on the phone
-b. Scan the QR code that is displayed on the frontend terminal window
-c. Follow the link to open Expo Go and launch the application
+7. Scan the QR code that is displayed on the frontend terminal window
+
+8. Follow the link to open Expo Go and launch the application
 
 ### 10. Frontend manual testing
 
