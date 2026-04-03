@@ -136,11 +136,15 @@ code .env
 ipconfig getifaddr en0
 ```
 
-Example Output: 192.168.68.51
+Example:
+
+```
+192.168.68.51
+```
 
 6. Add the LAN IP output to EXPO_PUBLIC_API_URL into the frontend directory .env file
 
-E.g.
+Example:
 
 ```
 EXPO_PUBLIC_API_URL=http://192.168.68.51:8000
