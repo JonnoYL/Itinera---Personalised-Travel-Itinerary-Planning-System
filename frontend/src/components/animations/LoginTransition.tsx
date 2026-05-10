@@ -3,12 +3,9 @@ import { Animated, Easing, StyleSheet, Text } from "react-native";
 
 type Props = {
   onComplete?: () => void;
-  holdMs?: number; // time to hold logo visible before completing
+  holdMs?: number;
 };
 
-// a short animated transition used when moving from Login → Home
-// fades out the underlying login form (consumer should hide it) and
-// presents a quick brand reveal then calls onComplete
 export default function LoginTransition({ onComplete, holdMs = 400 }: Props) {
   const bgOpacity = useRef(new Animated.Value(0)).current;
   const logoOpacity = useRef(new Animated.Value(0)).current;

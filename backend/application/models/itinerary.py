@@ -4,9 +4,8 @@ from .poi import POIResponse
 import datetime
 
 
-# GeoJSON Models
 class Geometry(BaseModel):
-    type: str  # e.g. "Point", "LineString"
+    type: str
     coordinates: List[Any]
 
 class Feature(BaseModel):

@@ -43,19 +43,15 @@ function timeLabel(t: string | undefined) {
   return `${h12}:${m} ${ampm}`;
 }
 
-// parse a time string into total minutes since midnight.
-// supports "HH:MM:SS", "HH:MM" and ISO strings like "2025-11-18T09:00:00Z".
 function parseTimeToMinutes(t?: string | null): number | null {
   if (!t) return null;
 
-  // ISO datetime
   if (t.includes("T")) {
     const d = new Date(t);
     if (Number.isNaN(d.getTime())) return null;
     return d.getHours() * 60 + d.getMinutes();
   }
 
-  // "HH:MM:SS" or "HH:MM"
   const parts = t.split(":");
   if (parts.length < 2) return null;
   const hh = Number(parts[0]);
@@ -64,14 +60,12 @@ function parseTimeToMinutes(t?: string | null): number | null {
   return hh * 60 + mm;
 }
 
-// format minutes since midnight as "HH:MM"
 function minutesToHM(total: number): string {
   const hh = Math.floor(total / 60);
   const mm = total % 60;
   return `${hh.toString().padStart(2, "0")}:${mm.toString().padStart(2, "0")}`;
 }
 
-// compute range + duration labels for header total time row
 function computeTotalTimeLabels(
   geoListData: Array<{ opening_time?: string }>,
   pois: BackendItineraryPOI[],
@@ -80,20 +74,14 @@ function computeTotalTimeLabels(
   let endMin: number | null = null;
 
   if (geoListData.length) {
-    // when using GeoJSON-driven list: first + last opening_time
     const firstT = geoListData[0]?.opening_time;
     const lastT = geoListData[geoListData.length - 1]?.opening_time;
     startMin = firstT ? parseTimeToMinutes(firstT) : null;
     endMin = lastT ? parseTimeToMinutes(lastT) : null;
   } else if (pois.length) {
-    // fallback: use raw POIs (sorted by order_index)
     const ordered = [...pois].sort((a, b) => a.order_index - b.order_index);
-
-    // start time = arrival_time of the first POI that has an arrival_time
     const firstWithArrival = ordered.find((p) => !!p.arrival_time);
     const startStr = firstWithArrival?.arrival_time ?? null;
-
-    // end time = prefer last departure_time otherwise last arrival_time
     const reversed = [...ordered].reverse();
     const lastWithDeparture = reversed.find((p) => !!p.departure_time);
     const lastWithArrival = reversed.find((p) => !!p.arrival_time);
@@ -183,7 +171,6 @@ export default function ItineraryDetail() {
     navigation.setOptions?.({ headerShown: false });
   }, [navigation]);
 
-  // load backend itinerary if an id is provided
   useEffect(() => {
     let active = true;
     (async () => {
@@ -277,7 +264,6 @@ export default function ItineraryDetail() {
     return { latitude: lat, longitude: lon };
   }, [backendItin?.start_lat, backendItin?.start_long, backendItin?.start_loc]);
 
-  // build route coordinates from start + POIs in order
   const routeCoords: LatLng[] = useMemo(() => {
     const ordered = [...pois].sort((a, b) => a.order_index - b.order_index);
     const pts: LatLng[] = [];
@@ -308,7 +294,6 @@ export default function ItineraryDetail() {
     };
   }, [routeCoords]);
 
-  // --- GeoJSON support ---
   type GeoPointProps = {
     name?: string;
     category?: string;
@@ -385,12 +370,11 @@ export default function ItineraryDetail() {
         }
       }
     }
-    // if order present, sort by it, otherwise retain input order
+
     const hasOrder = pts.every((p) => typeof p.order === "number");
     return hasOrder ? [...pts].sort((a, b) => a.order! - b.order!) : pts;
   }, [featureCollection]);
 
-  // build list rows from GeoJSON points when available
   type GeoListRow = {
     key: string;
     name: string;
@@ -459,7 +443,6 @@ export default function ItineraryDetail() {
     return lines;
   }, [featureCollection]);
 
-  // midpoint labels between consecutive POIs showing travel time (minutes)
   const edgeLabels: { coordinate: LatLng; text: string }[] = useMemo(() => {
     const labels: { coordinate: LatLng; text: string }[] = [];
     const ordered = [...pois].sort((a, b) => a.order_index - b.order_index);
@@ -508,20 +491,17 @@ export default function ItineraryDetail() {
     if (!raw) return undefined;
 
     if (Array.isArray(raw)) {
-      // ["Museum", "Gallery"] → "Museum, Gallery"
       return (raw as unknown[]).map(String).join(", ");
     }
 
     if (typeof raw === "string") {
       if (raw.includes(",")) {
-        // "Museum,Gallery" → "Museum, Gallery"
         return raw
           .split(",")
           .map((s) => s.trim())
           .filter(Boolean)
           .join(", ");
       }
-      // "MuseumGallery" → "Museum, Gallery"
       const parts = raw.split(/(?=[A-Z])/);
       return parts.join(", ");
     }
@@ -534,7 +514,6 @@ export default function ItineraryDetail() {
     return formatCategoryLabel(catUnknown);
   }
 
-  // fit camera to either GeoJSON geometry
   useEffect(() => {
     if (!mapRef.current) return;
     const coords: LatLng[] = [];
@@ -552,7 +531,6 @@ export default function ItineraryDetail() {
     });
   }, [routeCoords, geoLineSegments, geoPoints]);
 
-  // helper function to get all coordinates currently relevant
   const allCoords: LatLng[] = useMemo(() => {
     const coords: LatLng[] = [];
     if (geoLineSegments.length) {
@@ -606,7 +584,6 @@ export default function ItineraryDetail() {
     )?.animateToRegion?.(region, 250);
   }, [allCoords]);
 
-  // ensure initial view is fitted to all geometry/points when map first becomes visible
   const didInitialFitRef = useRef(false);
   useEffect(() => {
     if (!allCoords.length || !mapRef.current) return;
@@ -616,13 +593,11 @@ export default function ItineraryDetail() {
     }
   }, [allCoords.length, fitToAll]);
   useEffect(() => {
-    // refit whenever user switches to Map tab
     if (view === "map" && allCoords.length && mapRef.current) {
       setTimeout(() => fitToAll(), 0);
     }
   }, [view, allCoords.length, fitToAll]);
 
-  // zoom helpers
   const zoomBy = (factor: number) => {
     if (!mapRef.current) return;
     const r = currentRegionRef.current || initialRegion;
@@ -642,17 +617,14 @@ export default function ItineraryDetail() {
   const zoomIn = () => zoomBy(1.5);
   const zoomOut = () => zoomBy(1 / 1.5);
 
-  // responsive map height (depending on device)
   const mapHeight = useMemo(() => {
     const h = Dimensions.get("window").height;
-    // reduce height so the map + cover fit without needing to scroll under navigation bar
     const target = Math.floor(h * 0.45);
     return Math.max(260, Math.min(420, target));
   }, []);
 
   const toHMS = (hm: string) => {
     if (!hm) return "";
-    // expecting HH:MM convert to HH:MM:00
     const parts = hm.split(":");
     if (parts.length === 2)
       return `${parts[0].padStart(2, "0")}:${parts[1].padStart(2, "0")}:00`;
@@ -661,7 +633,6 @@ export default function ItineraryDetail() {
     return hm;
   };
 
-  // helpers to convert HH:MM to Date and back for wheel picker
   const hmToDate = (hm: string | undefined): Date => {
     const base = new Date();
     if (!hm) return base;

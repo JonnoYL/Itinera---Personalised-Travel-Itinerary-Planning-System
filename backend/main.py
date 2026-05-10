@@ -21,15 +21,14 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# access environment variables
 DEV_USERNAME = os.getenv("DEV_USERNAME")
 DEV_PASSWORD = os.getenv("DEV_PASSWORD")
 
 def postgres_test(retries=5, delay=4):
     for i in range(retries):
         try:
-            Base.metadata.drop_all(engine)  # drop all tables first
-            Base.metadata.create_all(engine)  # create them all again
+            Base.metadata.drop_all(engine)
+            Base.metadata.create_all(engine)
             logger.info("postgres connection OK!")
 
             with Session(engine) as session:
@@ -62,8 +61,6 @@ async def lifespan(app: FastAPI):
     populate_poi_data()
     populate_poi_relationship_data()
     yield
-    # shutdown events
-    # e.g., close database connections, clean up temporary files etc...
 
 app = FastAPI(lifespan=lifespan)
 app.include_router(signupRouter)
@@ -81,7 +78,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-logging.basicConfig(level=logging.INFO)  # information levels are shown
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("backend")
 
 if __name__ == "__main__":

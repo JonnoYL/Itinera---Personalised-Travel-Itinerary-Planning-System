@@ -126,7 +126,7 @@ class ItineraryDatabase:
             .options(
                 joinedload(ItineraryDatabaseModel.pois).joinedload(
                     ItineraryPOI.poi
-                )  # load the actual POI data
+                )
             )
             .filter(ItineraryDatabaseModel.id == itinerary_id)
             .first()
@@ -159,7 +159,6 @@ class ItineraryDatabase:
             return True
         return False
 
-    # itinerary to POI mapping
     def add_pois_to_itinerary(self, itinerary_id: int, poi_details: List[dict]):
         """
         Replace the itinerary's POI sequence with the provided list.
@@ -173,11 +172,8 @@ class ItineraryDatabase:
         - travel_distance_from_prev
         """
         itinerary = self.get_itinerary_by_id(itinerary_id)
-
-        # clear existing mappings
         itinerary.pois.clear()
 
-        # add new mappings in order
         for poi_info in poi_details:
             itinerary.pois.append(ItineraryPOI(**poi_info))
 
@@ -239,4 +235,4 @@ class ItineraryDatabase:
         for field, value in update_dict.items():
             setattr(itinerary, field, value)
 
-        self.db.flush() # stage changes
+        self.db.flush()

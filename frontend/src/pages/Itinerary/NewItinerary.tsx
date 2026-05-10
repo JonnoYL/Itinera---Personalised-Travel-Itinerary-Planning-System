@@ -366,7 +366,7 @@ export default function NewItinerary() {
         return;
       }
 
-      // @ts-expect-error typed in HomeStackParamList
+      // @ts-expect-error
       navigation.replace("ItineraryDetail", { backendId: createdId });
     } catch (e) {
       const err = e as AxiosError<unknown>;
@@ -1781,7 +1781,6 @@ const styles = StyleSheet.create({
 
   circleBtnDisabled: { backgroundColor: "#EFE7E3" },
 
-  // ===== Calendar / Modal Styles =====
   modalOverlay: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.35)",

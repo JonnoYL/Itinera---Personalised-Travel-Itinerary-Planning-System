@@ -9,7 +9,6 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v4
 
-      # Frontend Linting
       - name: Set up Node
         uses: actions/setup-node@v3
         with:
@@ -23,7 +22,6 @@ jobs:
         working-directory: frontend
         run: npx eslint .
 
-      # Backend Linting
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -51,7 +49,6 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v4
 
-      # FRONTEND TESTS
       - name: Set up Node
         uses: actions/setup-node@v3
         with:
@@ -64,8 +61,6 @@ jobs:
       - name: Run frontend tests
         working-directory: frontend
         run: npm run test:coverage
-
-      # BACKEND TESTS
 
       - name: Set up Python
         uses: actions/setup-python@v5

@@ -31,7 +31,6 @@ class ItineraryService:
         'generate itinerary' function.
         """
 
-        # input validation
         if itinerary_request.budget < 0:
             raise HTTPException(
                 status_code=400,
@@ -50,7 +49,6 @@ class ItineraryService:
                 detail="Date cannot be in the past"
             )
 
-        # validate and retrieve user
         user = self.user_service.get_user_by_id(itinerary_request.user_id)
         if not user:
             raise HTTPException(
@@ -59,8 +57,6 @@ class ItineraryService:
             )
 
         existing_pois = self.poi_service.get_all_pois()
-
-        # create start POI (user-defined location)
         start_cat = itinerary_request.start_cat.split('.')[-1].replace('_', ' ').title()
         starting_poi = {
             "name": itinerary_request.start_name,
@@ -75,11 +71,8 @@ class ItineraryService:
             "is_user_added": True
         }
         new_start = self.poi_service.create_poi(starting_poi)
-
-        # create end POI (only for straight trips)
         new_end = None
         if itinerary_request.end_lat is not None:
-            # straight trip: create end POI
             end_cat = itinerary_request.end_cat.split('.')[-1].replace('_', ' ').title()
             ending_poi = {
                 "name": itinerary_request.end_name,
@@ -95,20 +88,9 @@ class ItineraryService:
             }
             new_end = self.poi_service.create_poi(ending_poi)
 
-        # create POI relationships for newly added POIs
-        # this computes database edges
-        #
-        # new_start -> all existing POIs
-        # existing POIs -> new_start
-        #
-        # new_end -> all existing POIs (if provided)
-        # existing POIs -> new_end
-        #
-        # new_start <-> new_end (if both provided)
         if new_start or new_end:
             self.poi_relationship_service.create_poi_relationships(existing_pois, "driving-car", new_start, new_end)
 
-        # persist itinerary metadata to database
         itinerary_dict = itinerary_request.model_dump()
         itinerary = self.itinerary_repo.create_itinerary(itinerary_dict)
         return itinerary
@@ -129,7 +111,6 @@ class ItineraryService:
     def get_itineraries_by_user(self, user_id: int) -> ItineraryResponse:
         """Get all user's itineraries"""
         itineraries = self.itinerary_repo.get_itineraries_by_user(user_id)
-        # log count for visibility during integration
         print("User:", user_id, " Itinerary count:", len(itineraries))
         return itineraries
 
@@ -138,20 +119,16 @@ class ItineraryService:
         Prepare and return a dictionary of precomputed data structures used
         by the optimisation model.
         """
-        # load POIs and filter out user-added POIs (except start/end which will be re-added)
         all_pois = self.poi_service.get_all_pois()
         all_default_pois = [poi for poi in all_pois if not poi.is_user_added]
 
-        # find starting POI
         starting_poi = next(poi for poi in all_pois if poi.name == itinerary.start_name)
         if starting_poi is None:
             raise HTTPException(500, "Start POI missing from POI dataset")
 
-        # add starting POI if user-added
         if starting_poi.is_user_added:
             all_default_pois.append(starting_poi)
 
-        # determine straight trip (has end POI) or round trip
         is_round_trip = True
         ending_poi = None
         if itinerary.end_name is not None:
@@ -162,13 +139,11 @@ class ItineraryService:
             if ending_poi.is_user_added:
                 all_default_pois.append(ending_poi)
 
-        # categories, ids and utility
         all_categories = {category.lower() for poi in all_default_pois for category in poi.category}
         poi_categories = {poi.id: [category.lower() for category in poi.category] for poi in all_default_pois}
         poi_ids = [poi.id for poi in all_default_pois]
         utility_scores = {poi.id: poi.intrinsic_score for poi in all_default_pois}
 
-        # costs, times, visit times built from relationships
         TAXI_COST_PER_M = 2.29 / 1000
         all_edges = self.poi_relationship_service.get_all_relationships()
 
@@ -177,7 +152,7 @@ class ItineraryService:
         travel_times = {(edge.from_poi_id, edge.to_poi_id): edge.duration_s / 60 for edge in all_edges}
 
         visit_costs = {poi.id: poi.visit_cost for poi in all_default_pois}
-        visit_times = {poi.id: poi.avg_visit_time for poi in all_default_pois} # minutes
+        visit_times = {poi.id: poi.avg_visit_time for poi in all_default_pois}
 
         opening_times = {poi.id: time_to_minutes(poi.opening_time) for poi in all_default_pois}
         closing_times = {poi.id: time_to_minutes(poi.closing_time) for poi in all_default_pois}
@@ -213,29 +188,17 @@ class ItineraryService:
         poi_ids = data["poi_ids"]
 
         m = gp.Model()
-
-        # MODEL VARIABLES
-        # indicator if POI i is selected
         y = m.addVars(poi_ids_with_return, vtype=GRB.BINARY, name="poi")
-        # indicator for edges between POIs
         z = m.addVars(poi_ids_with_return, poi_ids_with_return, vtype=GRB.BINARY, name="edge")
-        # position of each POI in sequence (continuous to speed up optimisation)
         p = m.addVars(poi_ids_with_return, vtype=GRB.CONTINUOUS, lb=1, ub=len(poi_ids_with_return), name="position")
-        # arrival times of POIs (minutes from midnight)
+
         arrival_time = m.addVars(poi_ids_with_return, vtype=GRB.CONTINUOUS, name="arrival_time")
 
-        # OBJECTIVE: maximise total utility of selected POIs
         m.setObjective(gp.quicksum(data["utility_scores"].get(i, 0) * y[i] for i in poi_ids_with_return), GRB.MAXIMIZE)
-
-        # source and end constraints: source first, return last
         m.addConstr(p[data["starting_poi"].id] == 1, name="source_chosen_first")
         m.addConstr(p[return_poi_id] == len(poi_ids_with_return), name="end_chosen_last")
-
-        # trip must depart from source to one vertex
         m.addConstr(gp.quicksum(z[data["starting_poi"].id, k] for k in poi_ids if k != data["starting_poi"].id) == 1, name="from_source")
-        # trip goes back to end
         m.addConstr(y[return_poi_id] == 1, name="force_return_node_selected")
-        # incoming/outgoing logic
         m.addConstr(gp.quicksum(z[j, return_poi_id] for j in poi_ids if j != data["starting_poi"].id) == 1, name="to_return_node")
         m.addConstr(gp.quicksum(z[return_poi_id, k] for k in poi_ids) == 0, name="no_out_from_return")
 
@@ -256,25 +219,20 @@ class ItineraryService:
         starting_poi = data["starting_poi"]
         poi_categories = data["poi_categories"]
 
-        # COST BUDGET: travelling fees + entrance fees ≤ cost budget
         m.addConstr(
             gp.quicksum(travel_costs.get((j, k)) * z[j, k] for j in poi_ids for k in poi_ids_with_return if j != k) +
             gp.quicksum(visit_costs[i] * y[i] for i in poi_ids_with_return) <= itinerary.budget,
             "cost_budget"
         )
 
-        # TIME BUDGET: travelling times + visiting times ≤ time budget
         m.addConstr(
             gp.quicksum(travel_times.get((j, k)) * z[j, k] for j in poi_ids for k in poi_ids_with_return if j != k) +
             gp.quicksum(visit_times[i] * y[i] for i in poi_ids_with_return) <= time_budget,
             "time_budget"
         )
 
-        # ARRIVAL TIMES: bounds and sequencing constraints
         for i in poi_ids_with_return:
-            # arrival time is after opening time
             m.addConstr(arrival_time[i] >= opening_times[i], name = f"arrive_after_open_time_{i}")
-            # arrival time is before closing time - visiting time
             m.addConstr(arrival_time[i] <= closing_times[i] - visit_times[i], name = f"arrive_before_close_time_{i}")
 
         m.addConstr(arrival_time[starting_poi.id] == time_to_minutes(itinerary.start_time))
@@ -282,20 +240,17 @@ class ItineraryService:
         for j in poi_ids:
             for k in poi_ids_with_return:
                 if j != k:
-                    # if edge j -> k, then arrival time of j must be before arrival time of k
                     m.addConstr(
                         arrival_time[j] + (visit_times[j] + travel_times[j, k]) * z[j, k]
                         <= arrival_time[k] + 24 * 60 * (1 - z[j, k]),
                         name = f"arrive_at_{j}_before_{k}"
                     )
 
-        # CATEGORY constraint (if categories were requested)
         if itinerary.categories:
             selected_categories = {c.lower() for c in itinerary.categories}
             non_terminal_pois = [i for i in poi_ids if i not in {starting_poi.id, return_poi_id}]
             selected_non_terminal = [i for i in non_terminal_pois if any(cat in selected_categories for cat in poi_categories[i])]
 
-            # more than half of the visited POIs, excluding start and end, must be from user-selected categories.
             if len(non_terminal_pois) > 0 and len(selected_non_terminal) > 0:
                 m.addConstr(
                     gp.quicksum(y[i] for i in selected_non_terminal) * 2
@@ -303,18 +258,13 @@ class ItineraryService:
                     name="majority_selected_categories"
                 )
 
-        # FLOW CONSERVATION
-        # if node i is visted, there must be one edge to that node j -> i (excluding the starting POI)
         m.addConstrs((gp.quicksum(z[j, i] for j in poi_ids if j != i) == y[i] for i in poi_ids if i != starting_poi.id), name="flow_in")
 
         if data["is_round_trip"]:
-            # if node i is visted, there must be one edge from that node i -> k
             m.addConstrs((gp.quicksum(z[i, k] for k in poi_ids_with_return if k != i) == y[i] for i in poi_ids), name="flow_out_round_trip")
         else:
-            # every visited node except the end node has one outgoing edge
             m.addConstrs((gp.quicksum(z[i, k] for k in poi_ids_with_return if k != i) == y[i] for i in poi_ids if i != return_poi_id), name="flow_out_straight")
 
-        # SUBTOUR ELIMINATION (MTZ)
         for i in poi_ids_with_return:
             for j in poi_ids_with_return:
                 if i != j:
@@ -331,10 +281,7 @@ class ItineraryService:
         print("GUROBI SOLVE DONE IN", pytime.time() - start)
 
         if m.status == GRB.INFEASIBLE:
-            # find minimal set of conflicting constraints (if one constraint is removed, model is feasible)
             m.computeIIS()
-
-            # constraints
             violated_constraints = [c.ConstrName for c in m.getConstrs() if c.IISConstr]
             print(violated_constraints)
 
@@ -347,15 +294,11 @@ class ItineraryService:
 
             raise HTTPException(status_code=400, detail=error_message)
 
-        # ff optimal, collect results
         selected_pois = [i for i in poi_ids_with_return if y[i].X > 0.5]
         poi_positions = {i: p[i].X for i in selected_pois}
-
-        # sort the POIs by ascending positions
         sorted_pois = sorted(poi_positions, key=lambda i: poi_positions[i])
         print(f'Itinerary POI sequence: {sorted_pois}')
 
-        # build itinerary details (times, distances, costs)
         all_default_pois = data["all_default_pois"]
         travel_distances = data["travel_distances"]
         travel_times = data["travel_times"]
@@ -373,7 +316,6 @@ class ItineraryService:
         mode_per_leg = []
 
         for poi_id in sorted_pois:
-            # for round trip the return node maps to starting_poi
             if data["is_round_trip"] and poi_id == return_poi_id:
                 poi_id = data["starting_poi"].id
 
@@ -392,8 +334,6 @@ class ItineraryService:
             distance_m = travel_distances.get((previous_poi.id, poi.id), 0)
             travel_time = travel_times.get((previous_poi.id, poi.id), 0)
             travel_cost = travel_costs.get((previous_poi.id, poi.id), 0)
-
-            # update times
             curr_time += timedelta(minutes=travel_time)
             arrival_ts = curr_time
             curr_time += timedelta(minutes=poi.avg_visit_time)
@@ -419,10 +359,7 @@ class ItineraryService:
         for i in range(len(pois_sequence) - 1):
             mode_per_leg.append("driving-car")
 
-        # FETCH ROUTE FROM EXTERNAL SERVICE (ORS)
         route_feature_collection = get_route(pois_sequence, mode_per_leg, data["travel_distances"], data["travel_times"])
-
-        # update DB statistics and return latest itinerary
         self.itinerary_repo.update_itinerary_stats(
             itinerary.id,
             total_time,
@@ -444,20 +381,14 @@ class ItineraryService:
 
         data = self._prepare_itinerary_data(itinerary)
         poi_ids = data["poi_ids"]
-
-        # if round trip, create synthetic return node and extend data structures
         if data["is_round_trip"]:
             return_poi_id = max(poi_ids) + 1
             poi_ids_with_return = poi_ids + [return_poi_id]
-
-            # extend per-node dictionaries for the return node using start POI's values
             data["utility_scores"][return_poi_id] = 0
             data["visit_costs"][return_poi_id] = 0
             data["visit_times"][return_poi_id] = 0
             data["opening_times"][return_poi_id] = time_to_minutes(data["starting_poi"].opening_time)
             data["closing_times"][return_poi_id] = time_to_minutes(data["starting_poi"].closing_time)
-
-            # set travel times/costs for links to return node from each poi (use safe fallback of 0)
             for poi_id in poi_ids:
                 data["travel_costs"][(poi_id, return_poi_id)] = data["travel_costs"].get((poi_id, data["starting_poi"].id), 0)
                 data["travel_times"][(poi_id, return_poi_id)] = data["travel_times"].get((poi_id, data["starting_poi"].id), 0)
@@ -465,8 +396,6 @@ class ItineraryService:
         else:
             return_poi_id = data["ending_poi"].id
             poi_ids_with_return = poi_ids
-
-        # build, add constraints, solve and extract results
         m, y, z, p, arrival_time = self._build_model(data, return_poi_id, poi_ids_with_return)
         self._add_constraints(m, y, z, p, arrival_time, data, itinerary, return_poi_id, poi_ids_with_return)
         return self._solve_and_extract(m, y, p, arrival_time, data, itinerary, return_poi_id, poi_ids_with_return)
@@ -482,14 +411,12 @@ class ItineraryService:
         itinerary = self.get_itinerary_by_id(itinerary_id)
         update_dict = update_data.model_dump(exclude_unset=True)
 
-        # validate budget
         if "budget" in update_dict and update_dict["budget"] < 0:
             raise HTTPException(
                 status_code=400,
                 detail="Budget cannot be less than 0"
             )
 
-        # validate times
         start_time = update_dict.get("start_time", itinerary.start_time)
         end_time = update_dict.get("end_time", itinerary.end_time)
         if end_time <= start_time:
@@ -499,13 +426,10 @@ class ItineraryService:
             )
 
         try:
-            # update fields in database
             self.itinerary_repo.update_itinerary_fields(itinerary_id, update_data)
-            # regenerate itinerary with updated fields
             generated = self.generate_itinerary(itinerary_id)
             return generated
         except HTTPException as e:
-            # if regeneration fails, propagate the error
             raise e
 
     def delete_itinerary(self, itinerary_id: int):

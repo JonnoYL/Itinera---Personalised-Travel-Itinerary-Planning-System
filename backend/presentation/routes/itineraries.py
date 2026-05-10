@@ -117,8 +117,8 @@ def update_itinerary(itinerary_id: int, update_data: ItineraryUpdate, db: Sessio
     service = get_service(db)
     try:
         updated = service.update_itinerary(itinerary_id, update_data)
-        db.commit() # only commit if itinerary can be successfully regenerated with updated fields
+        db.commit()
         return updated
     except HTTPException as e:
-        db.rollback() # rollback to db state before update
+        db.rollback()
         raise e

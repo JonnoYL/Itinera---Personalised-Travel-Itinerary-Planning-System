@@ -30,7 +30,6 @@ class ItineraryDatabaseModel(Base):
     end_time = Column(Time, nullable=False)
     categories = Column(ARRAY(String), nullable=True)
 
-    # computed statistics after route generation
     total_time = Column(Float, nullable=True)
     total_cost = Column(Float, nullable=True)
     total_distance = Column(Float, nullable=True)
@@ -38,7 +37,6 @@ class ItineraryDatabaseModel(Base):
 
     user = relationship("UserDatabaseModel", back_populates="itineraries", lazy="joined")
 
-    # virtual relationship to join table
     pois = relationship(
         "ItineraryPOI",
         back_populates="itinerary",
@@ -48,7 +46,6 @@ class ItineraryDatabaseModel(Base):
 
     feature_collection = Column(JSON, nullable=True)
 
-# join table
 class ItineraryPOI(Base):
     __tablename__ = "itinerary_pois"
 

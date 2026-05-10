@@ -41,8 +41,6 @@ def populate_poi_data():
 
     all_pois = poi_repo.get_all_pois()
     print(f"Populated database with {len(all_pois)} POIs from dataset")
-    # for poi in all_pois:
-    #     print(f"{poi.id}: {poi.name} ({poi.category})")
 
 def populate_poi_relationship_data():
     print("Populating POI relationship data...")
