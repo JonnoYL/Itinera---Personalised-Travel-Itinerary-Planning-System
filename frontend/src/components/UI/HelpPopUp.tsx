@@ -28,9 +28,7 @@ export default function HelpPopUp({
                 <Text style={styles.modalTitle}>Forgot your password?</Text>
                 <Text style={styles.modalText}>
                   Make sure you’re entering the correct password.{"\n"}
-                  Passwords are case-sensitive.{"\n"}
-                  If you’ve forgotten it, contact your admin or support to reset
-                  it.
+                  Passwords are case-sensitive.
                 </Text>
 
                 <Text style={styles.modalTitle}>Forgot your username?</Text>
@@ -42,8 +40,7 @@ export default function HelpPopUp({
                 <Text style={styles.modalTitle}>Other tips:</Text>
                 <Text style={styles.modalText}>
                   Ensure Caps Lock is off.{"\n"}
-                  Refresh the page and try again if login fails.{"\n"}
-                  Clear browser cache if issues persist.
+                  Refresh the page and try again if login fails.
                 </Text>
               </View>
               <Pressable

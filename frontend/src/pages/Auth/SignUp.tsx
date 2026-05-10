@@ -31,6 +31,7 @@ export default function SignUp() {
   const [hasLoginResolved, setHasLoginResolved] = useState(false);
   const [isInvalidUsername, setIsInvalidUsername] = useState(false);
   const formOpacity = useRef(new Animated.Value(1)).current;
+  const [signupError, setSignupError] = useState("");
 
   return (
     <View style={styles.safe}>
@@ -41,13 +42,6 @@ export default function SignUp() {
           <Text style={styles.brand}>Itinera</Text>
           <Text style={styles.title}>Sign Up</Text>
           <View style={styles.form}>
-            {/* <TextField
-                placeholder="Email"
-                keyboardType="email-address"
-                autoCapitalize="none"
-                value={email}
-                onChangeText={setEmail}
-            /> */}
             <TextField
               placeholder="Username"
               keyboardType="default"
@@ -57,15 +51,22 @@ export default function SignUp() {
                 setUsername(text);
                 setSameUsername(false);
                 setIsInvalidUsername(false);
+                setSignupError("");
               }}
             />
             <View style={{ height: 12 }} />
-            <TextField
-              placeholder="Password"
-              secureTextEntry
-              value={password}
-              onChangeText={setPassword}
-            />
+              <TextField
+                placeholder="Password"
+                secureTextEntry
+                value={password}
+                onChangeText={(text) => {
+                  setPassword(text);
+                  setIsPasswordMismatch(false);
+                  setIsPasswordTooShort(false);
+                  setSameUsername(false);
+                  setSignupError("");
+                }}
+              />
             {showHelp && (
               <HelpPopUp
                 modalVisible={showHelp}
@@ -73,12 +74,17 @@ export default function SignUp() {
               />
             )}
             <View style={{ height: 12 }} />
-            <TextField
-              placeholder="Confirm Password"
-              secureTextEntry
-              value={confirmedPassword}
-              onChangeText={setConfirmedPassword}
-            />
+              <TextField
+                placeholder="Confirm Password"
+                secureTextEntry
+                value={confirmedPassword}
+                onChangeText={(text) => {
+                  setConfirmedPassword(text);
+                  setIsPasswordMismatch(false);
+                  setSameUsername(false);
+                  setSignupError("");
+                }}
+              />
 
             {isPasswordMismatch && (
               <View>
@@ -110,9 +116,12 @@ export default function SignUp() {
               </View>
             )}
 
-            <Text style={styles.passwordHint}>
-              Password must be 8 or more characters long
-            </Text>
+            {signupError.length > 0 && (
+              <View>
+                <View style={{ height: 12 }} />
+                <Text style={{ color: "red" }}>{signupError}</Text>
+              </View>
+            )}
           </View>
         </Animated.View>
 
@@ -124,27 +133,26 @@ export default function SignUp() {
               setIsPasswordTooShort(false);
               setSameUsername(false);
               setIsInvalidUsername(false);
+              setSignupError("");
+
+              if (!username.trim()) {
+                setIsInvalidUsername(true);
+                return;
+              }
 
               if (password !== confirmedPassword) {
                 setIsPasswordMismatch(true);
-                await signUpWithUsernamePassword("", password);
                 return;
               }
 
               if (password.length < 8) {
                 setIsPasswordTooShort(true);
-              }
-
-              const pwdTooShort = password.length < 8;
-              if (pwdTooShort) {
-                setIsPasswordTooShort(true);
-                await signUpWithUsernamePassword(username, password);
                 return;
               }
 
               try {
                 const signupResult = await signUpWithUsernamePassword(
-                  username,
+                  username.trim(),
                   password,
                 );
 
@@ -156,7 +164,7 @@ export default function SignUp() {
                 Keyboard.dismiss();
                 setToken(signupResult.token);
                 setUserId(signupResult.user_id);
-                setCtxUsername(username);
+                setCtxUsername(username.trim());
 
                 Animated.timing(formOpacity, {
                   toValue: 0,
@@ -165,13 +173,6 @@ export default function SignUp() {
                 }).start();
 
                 setAnimating(true);
-                setHasAnimCompleted(false);
-                setHasLoginResolved(false);
-
-                setHasLoginResolved(true);
-                if (hasAnimCompleted) {
-                  navigation.replace("MainTabs");
-                }
               } catch (err) {
                 const axiosError = err as AxiosError<SignupErrorResponse>;
 
@@ -182,19 +183,23 @@ export default function SignUp() {
                   const hasUsernameError = items.some(
                     (d) => Array.isArray(d?.loc) && d.loc.includes("username"),
                   );
+
                   const hasPasswordError = items.some(
                     (d) => Array.isArray(d?.loc) && d.loc.includes("password"),
                   );
 
                   if (hasUsernameError) {
                     setIsInvalidUsername(true);
-                  }
-                  if (hasPasswordError) {
-                    setIsPasswordTooShort(true);
+                    return;
                   }
 
-                  return;
+                  if (hasPasswordError) {
+                    setIsPasswordTooShort(true);
+                    return;
+                  }
                 }
+
+                setSignupError("Sign up failed. Check the backend is running and try again.");
               }
             }}
           />
@@ -220,10 +225,7 @@ export default function SignUp() {
         <LoginTransition
           holdMs={450}
           onComplete={() => {
-            setHasAnimCompleted(true);
-            if (hasLoginResolved) {
-              navigation.replace("MainTabs");
-            }
+            navigation.replace("MainTabs");
           }}
         />
       )}
@@ -262,12 +264,5 @@ const styles = StyleSheet.create({
   actions: {
     marginTop: 28,
     width: "100%",
-  },
-  passwordHint: {
-    marginTop: 4,
-    marginBottom: 8,
-    fontSize: 14,
-    color: "#8C7F7A",
-    textAlign: "center",
   },
 });

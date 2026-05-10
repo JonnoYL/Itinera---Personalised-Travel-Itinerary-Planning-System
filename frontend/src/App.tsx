@@ -4,7 +4,6 @@ import Login from "./pages/Auth/Login";
 import SignUp from "./pages/Auth/SignUp";
 import NewItinerary from "./pages/Itinerary/NewItinerary";
 import ItineraryDetail from "./pages/Home/ItineraryDetail";
-import EditItinerary from "./pages/Home/EditItinerary";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { UserProvider } from "./context/UserContext";
@@ -44,7 +43,6 @@ export default function App() {
             />
             <Stack.Screen name="NewItinerary" component={NewItinerary} />
             <Stack.Screen name="ItineraryDetail" component={ItineraryDetail} />
-            <Stack.Screen name="EditItinerary" component={EditItinerary} />
           </Stack.Navigator>
         </NavigationContainer>
       </ItineraryProvider>

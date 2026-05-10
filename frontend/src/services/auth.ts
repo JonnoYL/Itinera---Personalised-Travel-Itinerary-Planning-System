@@ -20,6 +20,7 @@ export async function signUpWithUsernamePassword(
       username,
       password,
     });
+
     return data;
   } catch (err) {
     const axiosError = err as AxiosError<SignupErrorResponse>;
@@ -30,11 +31,7 @@ export async function signUpWithUsernamePassword(
       return null;
     }
 
-    if (status === 422) {
-      throw axiosError;
-    }
-
-    return null;
+    throw axiosError;
   }
 }
 
