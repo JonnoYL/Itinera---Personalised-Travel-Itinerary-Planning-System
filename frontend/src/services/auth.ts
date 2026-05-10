@@ -56,21 +56,3 @@ export async function loginWithUsernamePassword(
   }
   return null;
 }
-
-export async function signupWithEmailPassword(): Promise<AuthResponse> {
-  await new Promise((resolve) => setTimeout(resolve, 600));
-  return {
-    token: "dev-token-signup-123",
-    user_id: 1,
-  };
-}
-
-export async function requestPasswordReset(): Promise<{ ok: boolean }> {
-  await new Promise((resolve) => setTimeout(resolve, 400));
-  return { ok: true };
-}
-
-export async function getHelp(): Promise<{ url: string }> {
-  await new Promise((resolve) => setTimeout(resolve, 200));
-  return { url: "https://example.com/help" };
-}

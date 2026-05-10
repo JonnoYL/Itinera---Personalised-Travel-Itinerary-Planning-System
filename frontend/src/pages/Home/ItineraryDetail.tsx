@@ -677,7 +677,6 @@ export default function ItineraryDetail() {
 
   const HeaderSection = () => (
     <>
-      {/* header with cover, title, budget summary */}
       <View style={styles.header}>
         <Pressable
           onPress={() => navigation.goBack()}
@@ -747,7 +746,6 @@ export default function ItineraryDetail() {
         </View>
       </View>
 
-      {/* Tabs */}
       <View style={styles.tabs}>
         <Pressable
           onPress={() => setView("list")}
@@ -808,7 +806,6 @@ export default function ItineraryDetail() {
 
             return (
               <View style={styles.timelineRow}>
-                {/* LEFT TIMELINE COLUMN */}
                 <View style={styles.timelineAxisCol}>
                   {!isFirst && <View style={styles.timelineLine} />}
                   <View
@@ -827,7 +824,6 @@ export default function ItineraryDetail() {
                   {!isLast && <View style={styles.timelineLine} />}
                 </View>
 
-                {/* RIGHT CONTENT COLUMN */}
                 <View style={styles.timelineContentCol}>
                   {!isFirst && travelLabel && (
                     <Text style={styles.travelLabel}>Travel {travelLabel}</Text>
@@ -895,7 +891,6 @@ export default function ItineraryDetail() {
                     currentRegionRef.current = r;
                   }}
                 >
-                  {/* GeoJSON points override default markers if provided */}
                   {!geoPoints.length && startCoord && (
                     <Marker
                       coordinate={startCoord}
@@ -978,7 +973,6 @@ export default function ItineraryDetail() {
                           strokeColor="#F04623"
                         />
                       )}
-                  {/* edge time labels (midpoints between consecutive POIs) */}
                   {edgeLabels.map((e, i) => (
                     <Marker
                       key={`el-${i}`}
@@ -1005,7 +999,6 @@ export default function ItineraryDetail() {
                   </Text>
                 </View>
               )}
-              {/* map controls overlay */}
               <View style={styles.mapControls}>
                 <Pressable
                   onPress={() =>
@@ -1047,7 +1040,6 @@ export default function ItineraryDetail() {
         </ScrollView>
       )}
 
-      {/* Edit Modal */}
       <Modal
         visible={editVisible}
         transparent
@@ -1265,37 +1257,9 @@ const styles = StyleSheet.create({
   tabActive: { backgroundColor: "#FFFFFF" },
   tabText: { color: "#8C7F7A" },
   tabTextActive: { color: "#1E1E1E", fontWeight: "700" },
-  dayHeader: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: "#1E1E1E",
-    marginBottom: 8,
-  },
-  poiCard: {
-    flexDirection: "row",
-    backgroundColor: "#FFFFFF",
-    borderRadius: 14,
-    padding: 12,
-    marginBottom: 10,
-    marginHorizontal: 16,
-    shadowColor: "#000",
-    shadowOpacity: 0.06,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 4 },
-  },
   poiTitle: { fontWeight: "700", color: "#1E1E1E" },
   poiMeta: { color: "#8C7F7A", marginTop: 2 },
   poiCost: { marginTop: 6, fontWeight: "700", color: "#1E1E1E" },
-  actionsCol: { alignItems: "center", justifyContent: "center", marginLeft: 8 },
-  iconBtn: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: "#F3EAE6",
-    alignItems: "center",
-    justifyContent: "center",
-    marginVertical: 4,
-  },
   emptyText: { textAlign: "center", color: "#8C7F7A", marginVertical: 10 },
   mapBox: {
     backgroundColor: "#FFFFFF",
@@ -1335,28 +1299,6 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     fontSize: 11,
   },
-  block: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 16,
-    padding: 12,
-    marginTop: 8,
-  },
-  blockTitle: { fontWeight: "700", color: "#1E1E1E", marginBottom: 8 },
-  warning: {
-    color: "#D44B3A",
-    fontWeight: "700",
-    fontSize: 16,
-    marginBottom: 8,
-  },
-  actionBtn: {
-    backgroundColor: "#FFFFFF",
-    borderWidth: 1,
-    borderColor: "#E6DCD8",
-    borderRadius: 14,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-  },
-  actionBtnText: { color: "#1E1E1E", fontWeight: "600" },
   modalOverlay: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.35)",
@@ -1392,11 +1334,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     padding: 24,
-  },
-  poiRow: {
-    paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "#F0E6E2",
   },
   timelineRow: {
     flexDirection: "row",
@@ -1480,10 +1417,4 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginTop: 8,
   },
-  poiUtility: {
-    fontWeight: "600",
-    color: "#8C7F7A",
-  },
-  poiRowTitle: { fontWeight: "700", color: "#1E1E1E" },
-  poiRowMeta: { color: "#8C7F7A" },
 });

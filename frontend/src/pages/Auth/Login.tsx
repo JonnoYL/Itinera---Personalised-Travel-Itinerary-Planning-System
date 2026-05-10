@@ -32,15 +32,7 @@ export default function Login() {
         >
           <Text style={styles.brand}>Itinera</Text>
           <Text style={styles.title}>Login</Text>
-
           <View style={styles.form}>
-            {/* <TextField
-            placeholder="Email"
-            keyboardType="email-address"
-            autoCapitalize="none"
-            value={email}
-            onChangeText={setEmail}
-          /> */}
             <TextField
               placeholder="Username"
               keyboardType="default"

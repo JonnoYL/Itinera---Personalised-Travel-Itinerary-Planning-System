@@ -52,7 +52,6 @@ export default function PrimaryButton({
       onPress={onPress}
       disabled={disabled}
     >
-      {/* render the title with contrasting text color */}
       <Text style={[styles.textBase, variantTextStyle, textStyle]}>
         {title}
       </Text>

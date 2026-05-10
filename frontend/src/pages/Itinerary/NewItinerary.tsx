@@ -460,7 +460,6 @@ export default function NewItinerary() {
         <View style={styles.centerWrap}>
           {compact && !reviewMode && (
             <Animated.View style={fadeStyle}>
-              {/* Trip Name */}
               <Text
                 style={[
                   styles.subtleLbl,
@@ -486,7 +485,6 @@ export default function NewItinerary() {
                 </Text>
               )}
 
-              {/* Description */}
               <View style={{ height: 10 }} />
               <Text
                 style={[
@@ -510,7 +508,6 @@ export default function NewItinerary() {
                 placeholderTextColor="#8C7F7A"
               />
 
-              {/* Start Date */}
               <View style={{ height: 10 }} />
               <Text
                 style={[
@@ -545,7 +542,6 @@ export default function NewItinerary() {
                 </Text>
               )}
 
-              {/* Start Location */}
               <View style={{ height: 10 }} />
               <Text
                 style={[
@@ -581,7 +577,6 @@ export default function NewItinerary() {
                 </Text>
               )}
 
-              {/* End Location (optional) */}
               <View style={{ height: 10 }} />
               <Text
                 style={[
@@ -622,7 +617,6 @@ export default function NewItinerary() {
                 </Pressable>
               )}
 
-              {/* Times */}
               <View style={{ height: 10 }} />
               <View style={{ flexDirection: "row", gap: 10 }}>
                 <View style={{ flex: 1 }}>
@@ -684,7 +678,6 @@ export default function NewItinerary() {
                 </Text>
               )}
 
-              {/* Budget */}
               <View style={{ height: 10 }} />
               <Text
                 style={[
@@ -712,7 +705,6 @@ export default function NewItinerary() {
                 </Text>
               )}
 
-              {/* Categories */}
               <View style={{ height: 10 }} />
               <Text
                 style={[
@@ -739,7 +731,6 @@ export default function NewItinerary() {
                 </Text>
               </Pressable>
 
-              {/* Cover Photo (single) */}
               <View style={{ height: 10 }} />
               <Text
                 style={[
@@ -1326,7 +1317,6 @@ export default function NewItinerary() {
         </View>
       </ScrollView>
 
-      {/* Travel Date Picker (only future / today allowed) */}
       <DateTimeModal
         visible={showDatePicker}
         initial={travelDate ?? new Date()}
@@ -1339,7 +1329,6 @@ export default function NewItinerary() {
         mode="date"
       />
 
-      {/* Start Time Picker */}
       <DateTimeModal
         visible={showStartPicker}
         initial={startTime ?? travelDate ?? new Date()}
@@ -1352,7 +1341,6 @@ export default function NewItinerary() {
         mode="time"
       />
 
-      {/* End Time Picker */}
       <DateTimeModal
         visible={showEndPicker}
         initial={endTime ?? travelDate ?? new Date()}
@@ -1365,7 +1353,6 @@ export default function NewItinerary() {
         mode="time"
       />
 
-      {/* start location modal with autosuggest */}
       <Modal
         visible={showStartLocModal}
         transparent
@@ -1404,7 +1391,6 @@ export default function NewItinerary() {
         </View>
       </Modal>
 
-      {/* end location modal with autosuggest */}
       <Modal
         visible={showEndLocModal}
         transparent
@@ -1443,7 +1429,6 @@ export default function NewItinerary() {
         </View>
       </Modal>
 
-      {/* categories modal */}
       <Modal
         visible={showCategoriesModal}
         transparent
@@ -1480,7 +1465,6 @@ export default function NewItinerary() {
         </View>
       </Modal>
 
-      {/* Creating Spinner */}
       <Modal
         visible={isCreating}
         transparent
@@ -1521,7 +1505,6 @@ export default function NewItinerary() {
         </View>
       </Modal>
 
-      {/* footer action */}
       {!compact && (
         <View style={styles.footerNav}>
           {combineSteps ? (
@@ -1609,9 +1592,7 @@ export default function NewItinerary() {
 }
 
 const styles = StyleSheet.create({
-
   root: { flex: 1, backgroundColor: "#FFF8F5" },
-
   scroll: {
     padding: 16,
     paddingBottom: 120,
@@ -1625,10 +1606,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     color: "#1E1E1E",
   },
-
   centerWrap: { width: "100%", maxWidth: 360, alignSelf: "center" },
-  section: { marginBottom: 24 },
-
   stepHeaderRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -1644,11 +1622,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginRight: 8,
   },
-
   sectionTitle: { fontSize: 20, fontWeight: "700", color: "#1E1E1E" },
-  chevron: { fontSize: 18, color: "#8C7F7A" },
   row: { marginBottom: 12 },
-
   inputButton: {
     height: 44,
     borderRadius: 10,
@@ -1658,9 +1633,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingHorizontal: 12,
   },
-
   inputButtonText: { color: "#1E1E1E", fontSize: 16 },
-
   textInput: {
     height: 44,
     borderRadius: 10,
@@ -1671,10 +1644,8 @@ const styles = StyleSheet.create({
     color: "#1E1E1E",
     fontSize: 16,
   },
-
   placeholderText: { color: "#8C7F7A" },
   chipsRow: { flexDirection: "row", flexWrap: "wrap", gap: 10 },
-
   chip: {
     paddingHorizontal: 16,
     paddingVertical: 10,
@@ -1685,19 +1656,10 @@ const styles = StyleSheet.create({
     marginRight: 8,
     marginBottom: 8,
   },
-
   chipSelected: { backgroundColor: "#FFE1D8", borderColor: "#F04623" },
   chipText: { color: "#1E1E1E" },
   chipTextSelected: { color: "#F04623", fontWeight: "700" },
   helper: { color: "#D44B3A", marginTop: 6, textAlign: "center" },
-
-  review: {
-    marginTop: 20,
-    paddingTop: 10,
-    alignSelf: "center",
-    width: "100%",
-    maxWidth: 520,
-  },
   reviewHeader: {
     fontSize: 22,
     fontWeight: "700",
@@ -1705,9 +1667,7 @@ const styles = StyleSheet.create({
     color: "#1E1E1E",
     textAlign: "center",
   },
-
   reviewSub: { color: "#8C7F7A", marginBottom: 20, textAlign: "center" },
-
   reviewRow: {
     flex: 1,
     flexDirection: "row",
@@ -1715,10 +1675,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingVertical: 10,
   },
-
   reviewLabel: { color: "#1E1E1E", fontWeight: "700", marginRight: 8 },
   reviewValue: { color: "#1E1E1E", flexShrink: 1 },
-
   reviewIconRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -1742,20 +1700,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
   },
-  createBtn: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    height: 56,
-    backgroundColor: "#F04623",
-    borderRadius: 28,
-    paddingHorizontal: 20,
-    flex: 1,
-  },
-
   createBtnDisabled: { backgroundColor: "#F7A892" },
-  createBtnText: { color: "#fff", fontWeight: "700", fontSize: 16 },
-
   nextBtn: {
     flexDirection: "row",
     alignItems: "center",
@@ -1766,9 +1711,7 @@ const styles = StyleSheet.create({
     borderRadius: 22,
     minWidth: 120,
   },
-
   nextBtnText: { color: "#fff", fontWeight: "700", marginRight: 6 },
-
   circleBtn: {
     width: 44,
     height: 44,
@@ -1778,9 +1721,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginRight: 12,
   },
-
   circleBtnDisabled: { backgroundColor: "#EFE7E3" },
-
   modalOverlay: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.35)",
@@ -1801,89 +1742,10 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 12,
   },
-  calHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: 6,
-  },
-
-  calHeaderText: { fontWeight: "600", color: "#1E1E1E" },
-
-  calNavBtn: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: "#F3EAE6",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  calNavBtnDisabled: {
-    backgroundColor: "#EFE7E3",
-  },
-  weekRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 4,
-  },
-
-  weekCell: { width: 36, textAlign: "center", color: "#8C7F7A" },
-
-  grid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "space-between",
-    marginBottom: 8,
-  },
-  dayCell: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    alignItems: "center",
-    justifyContent: "center",
-    marginVertical: 4,
-  },
-  dayCellFaded: { opacity: 0.4 },
-  dayCellSelected: { backgroundColor: "#F04623" },
-  dayCellDisabled: {
-    opacity: 0.25,
-  },
-  dayText: { color: "#1E1E1E" },
-  dayTextFaded: { color: "#8C7F7A" },
-  dayTextSelected: { color: "#fff", fontWeight: "700" },
-  dayTextDisabled: {
-    color: "#8C7F7A",
-  },
-
   subtleLbl: { color: "#8C7F7A", textAlign: "center" },
-  timeGridWrap: { paddingHorizontal: 4 },
-
-  timeGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "center",
-    gap: 8,
-  },
-  timeChip: {
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-    borderRadius: 16,
-    backgroundColor: "#FFFFFF",
-    borderWidth: 1,
-    borderColor: "#E6DCD8",
-  },
-
-  timeChipSelected: { backgroundColor: "#FFE1D8", borderColor: "#F04623" },
-  timeChipText: { color: "#1E1E1E" },
-  timeChipTextSelected: { color: "#F04623", fontWeight: "700" },
-
   modalActions: { flexDirection: "row", justifyContent: "flex-end", gap: 8 },
   modalBtn: { paddingHorizontal: 14, paddingVertical: 10, borderRadius: 10 },
   modalCancel: { backgroundColor: "#F3EAE6" },
   modalConfirm: { backgroundColor: "#F04623" },
   modalBtnText: { color: "#1E1E1E", fontWeight: "600" },
-
-  dayPressable: {
-    cursor: "pointer",
-  },
 });

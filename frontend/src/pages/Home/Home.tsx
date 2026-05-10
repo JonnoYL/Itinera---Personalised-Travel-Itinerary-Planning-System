@@ -238,7 +238,6 @@ export default function Home() {
             </View>
           );
         })}
-        {/* POI pins for the selected itinerary */}
         {selectedItinerary &&
           Array.isArray(selectedItinerary.pois) &&
           selectedItinerary.pois.map((ip, idx) => {
@@ -271,7 +270,6 @@ export default function Home() {
             );
           })}
       </MapView>
-      {/* zoom controls */}
       <View style={[styles.zoomGroup, { bottom: 90 + insets.bottom }]}>
         <Pressable
           accessibilityRole="button"
@@ -288,7 +286,6 @@ export default function Home() {
           <Text style={styles.ctrlText}>−</Text>
         </Pressable>
       </View>
-      {/* map type toggle (icon) */}
       <Pressable
         accessibilityRole="button"
         onPress={() =>
@@ -306,7 +303,6 @@ export default function Home() {
           color="#1E1E1E"
         />
       </Pressable>
-      {/* floating New Itinerary button */}
       <Pressable
         accessibilityRole="button"
         onPress={() => navigation.navigate("NewItinerary")}
@@ -315,7 +311,6 @@ export default function Home() {
         <Text style={styles.newButtonText}>+ New Itinerary</Text>
       </Pressable>
 
-      {/* bottom popup for selected itinerary */}
       {selectedItinerary && (
         <Animated.View
           style={[
@@ -324,14 +319,12 @@ export default function Home() {
             { transform: [{ translateY: sheetY }] },
           ]}
         >
-          {/* collapse handle - slideable */}
           <View
             style={{ alignItems: "center", paddingVertical: 6 }}
             {...panResponder.panHandlers}
           >
             <View style={styles.handle} />
           </View>
-          {/* tappable card area */}
           <Pressable
             onPress={() => {
               const id = selectedItinerary.id;
@@ -341,7 +334,6 @@ export default function Home() {
             accessibilityRole="button"
             style={{ flexDirection: "row", alignItems: "center" }}
           >
-            {/* cover photo */}
             <View
               style={{
                 width: 72,
@@ -389,42 +381,8 @@ export default function Home() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#FFF8F5" },
-  card: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 16,
-    padding: 12,
-    shadowColor: "#000",
-    shadowOpacity: 0.06,
-    shadowOffset: { width: 0, height: 4 },
-    shadowRadius: 8,
-    elevation: 2,
-    marginBottom: 16,
-    position: "relative",
-  },
-  cardRow: { flexDirection: "row", gap: 10 },
-  bigImg: {
-    width: 140,
-    height: 140,
-    borderRadius: 12,
-    backgroundColor: "#EDE7E3",
-  },
-  smallCol: { flex: 1, gap: 8 },
-  smallImg: {
-    flex: 1,
-    borderRadius: 12,
-    backgroundColor: "#EDE7E3",
-    minHeight: 66,
-  },
-  cardTitleRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginTop: 10,
-  },
   cardTitle: { fontSize: 16, fontWeight: "700", color: "#1E1E1E" },
-  cardPrice: { color: "#8C7F7A" },
   cardSub: { color: "#8C7F7A", marginTop: 2 },
-  cardDate: { fontWeight: "700", color: "#1E1E1E", marginTop: 10 },
   bottomCard: {
     position: "absolute",
     left: 12,
@@ -446,49 +404,6 @@ const styles = StyleSheet.create({
     height: 5,
     backgroundColor: "#E6DCD8",
     borderRadius: 3,
-  },
-  viewBtn: {
-    alignSelf: "center",
-    backgroundColor: "#F04623",
-    borderRadius: 22,
-    height: 44,
-    paddingHorizontal: 16,
-    alignItems: "center",
-    justifyContent: "center",
-    minWidth: 160,
-  },
-  viewBtnText: { color: "#fff", fontWeight: "700" },
-  emptyOverlay: {
-    position: "absolute",
-    left: 20,
-    right: 20,
-    alignItems: "center",
-  },
-  trashWrapBase: {
-    position: "absolute",
-    right: 12,
-    bottom: 12,
-    borderRadius: 20,
-    padding: 8,
-    opacity: 1,
-  },
-  trashHover: {
-    shadowColor: "#F04623",
-    shadowOpacity: 0.6,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 0 },
-  },
-  placeholder: {
-    flex: 1,
-    justifyContent: "flex-end",
-    paddingBottom: 24,
-  },
-  placeholderText: {
-    color: "#8C7F7A",
-    textAlign: "center",
-    backgroundColor: "#F3EAE6",
-    paddingVertical: 14,
-    borderRadius: 14,
   },
   newButton: {
     position: "absolute",
@@ -532,58 +447,4 @@ const styles = StyleSheet.create({
   },
   ctrlText: { color: "#1E1E1E", fontSize: 18, fontWeight: "700" },
   typeIconBtn: { position: "absolute", right: 20 },
-  modalOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0,0,0,0.35)",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 24,
-  },
-  modalCard: {
-    width: "100%",
-    maxWidth: 360,
-    backgroundColor: "#FFFFFF",
-    borderRadius: 16,
-    padding: 20,
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: "700",
-    color: "#1E1E1E",
-    textAlign: "center",
-    marginBottom: 12,
-  },
-  modalDesc: {
-    fontSize: 14,
-    lineHeight: 20,
-    color: "#2C201D",
-    textAlign: "center",
-    marginBottom: 20,
-  },
-  modalButtonsRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    gap: 12,
-  },
-  modalBtn: {
-    flex: 1,
-    borderRadius: 12,
-    paddingVertical: 12,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  modalCancelBtn: {
-    backgroundColor: "#F3EAE6",
-  },
-  modalDeleteBtn: {
-    backgroundColor: "#F04623",
-  },
-  modalCancelText: {
-    color: "#1E1E1E",
-    fontWeight: "600",
-  },
-  modalDeleteText: {
-    color: "#FFFFFF",
-    fontWeight: "600",
-  },
 });

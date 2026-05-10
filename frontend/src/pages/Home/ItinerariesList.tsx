@@ -78,7 +78,6 @@ export default function ItinerariesList() {
         />
       )}
 
-      {/* New Itinerary Button */}
       <Pressable
         accessibilityRole="button"
         onPress={() => navigation.navigate("NewItinerary")}
@@ -87,7 +86,6 @@ export default function ItinerariesList() {
         <Text style={styles.newButtonText}>+ New Itinerary</Text>
       </Pressable>
 
-      {/* Confirm Delete Modal */}
       <Modal
         transparent
         visible={pendingDeleteId !== null}
@@ -151,7 +149,6 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     position: "relative",
   },
-  cardRow: { flexDirection: "row", gap: 10 },
   cardCover: {
     width: "100%",
     height: 190,
