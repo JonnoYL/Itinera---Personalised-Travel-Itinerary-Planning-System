@@ -321,9 +321,7 @@ export default function Home() {
           <View
             style={{ alignItems: "center", paddingVertical: 6 }}
             {...panResponder.panHandlers}
-          >
-            <View style={styles.handle} />
-          </View>
+          />
           <Pressable
             onPress={() => {
               const id = selectedItinerary.id;
@@ -397,12 +395,6 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: -4 },
     shadowRadius: 8,
     elevation: 6,
-  },
-  handle: {
-    width: 44,
-    height: 5,
-    backgroundColor: "#E6DCD8",
-    borderRadius: 3,
   },
   newButton: {
     position: "absolute",

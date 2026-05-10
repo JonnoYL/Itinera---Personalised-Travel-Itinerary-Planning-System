@@ -37,7 +37,6 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     setUserId(null);
     setUsername(null);
     setInterests([]);
-    setAvatarUri(null);
   }, []);
 
   const value = useMemo(

@@ -64,6 +64,22 @@ type DateTimeModalProps = {
   mode?: "datetime" | "date" | "time";
 };
 
+function getTodayStart() {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return today;
+}
+
+function clampPastDate(d: Date, mode: "datetime" | "date" | "time") {
+  if (mode !== "date") return d;
+
+  const today = getTodayStart();
+  const selected = new Date(d);
+  selected.setHours(0, 0, 0, 0);
+
+  return selected < today ? today : d;
+}
+
 function DateTimeModal({
   visible,
   initial,
@@ -72,12 +88,17 @@ function DateTimeModal({
   title,
   mode = "datetime",
 }: DateTimeModalProps) {
-  const [pickerValue, setPickerValue] = useState<Date>(initial ?? new Date());
-  useEffect(() => {
-    if (visible) setPickerValue(initial ?? new Date());
-  }, [visible, initial]);
+  const [pickerValue, setPickerValue] = useState<Date>(
+    clampPastDate(initial ?? new Date(), mode),
+  );
 
-  const confirm = () => onConfirm(pickerValue);
+  useEffect(() => {
+    if (visible) {
+      setPickerValue(clampPastDate(initial ?? new Date(), mode));
+    }
+  }, [visible, initial, mode]);
+
+  const confirm = () => onConfirm(clampPastDate(pickerValue, mode));
 
   return (
     <Modal
@@ -93,6 +114,7 @@ function DateTimeModal({
             <DateTimePicker
               value={pickerValue}
               mode={mode === "date" ? "date" : "time"}
+              minimumDate={mode === "date" ? getTodayStart() : undefined}
               display={Platform.OS === "ios" ? "spinner" : "default"}
               {...(Platform.OS === "ios"
                 ? {
@@ -102,7 +124,8 @@ function DateTimeModal({
                 : {})}
               style={{ height: 216, alignSelf: "stretch" }}
               onChange={(_, d) => {
-                if (d) setPickerValue(d);
+                if (!d) return;
+                setPickerValue(clampPastDate(d, mode));
               }}
             />
           </View>
@@ -487,7 +510,7 @@ export default function NewItinerary() {
                   { marginBottom: 4, textAlign: "left" },
                 ]}
               >
-                Trip Description*
+                Trip Description (optional)
               </Text>
               <TextInput
                 style={[
@@ -529,13 +552,6 @@ export default function NewItinerary() {
                     : "Select Travel Date"}
                 </Text>
               </Pressable>
-              {travelDate && !isTravelDateValid && (
-                <Text
-                  style={[styles.helper, { textAlign: "left", marginTop: 4 }]}
-                >
-                  Travel date cannot be in the past
-                </Text>
-              )}
 
               <View style={{ height: 10 }} />
               <Text
@@ -707,7 +723,7 @@ export default function NewItinerary() {
                   { marginBottom: 4, textAlign: "left" },
                 ]}
               >
-                Categories*
+                Categories (optional)
               </Text>
               <Pressable
                 onPress={() => setShowCategoriesModal(true)}
@@ -916,11 +932,6 @@ export default function NewItinerary() {
                           : "Select Travel Date"}
                       </Text>
                     </Pressable>
-                    {travelDate && !isTravelDateValid && (
-                      <Text style={styles.helper}>
-                        Travel date cannot be in the past
-                      </Text>
-                    )}
                   </View>
                   <View style={styles.row}>
                     <Pressable
@@ -1317,7 +1328,7 @@ export default function NewItinerary() {
         initial={travelDate ?? new Date()}
         onClose={() => setShowDatePicker(false)}
         onConfirm={(d) => {
-          setTravelDate(d);
+          setTravelDate(clampPastDate(d, "date"));
           setShowDatePicker(false);
         }}
         title="Select Travel Date"

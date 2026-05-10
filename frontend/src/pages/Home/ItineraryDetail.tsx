@@ -119,13 +119,23 @@ function computeTotalTimeLabels(
 
 function formatDurationMinutes(mins?: number | null): string | null {
   if (mins == null || !Number.isFinite(mins)) return null;
+
   const rounded = Math.round(mins);
-  if (rounded < 60) return `${rounded} mins`;
+
+  if (rounded < 60) {
+    return `${rounded} ${rounded === 1 ? "min" : "mins"}`;
+  }
+
   const hours = Math.floor(rounded / 60);
   const rem = rounded % 60;
   const parts: string[] = [];
+
   parts.push(`${hours} ${hours === 1 ? "hr" : "hrs"}`);
-  if (rem > 0) parts.push(`${rem} mins`);
+
+  if (rem > 0) {
+    parts.push(`${rem} ${rem === 1 ? "min" : "mins"}`);
+  }
+
   return parts.join(" ");
 }
 
@@ -721,26 +731,37 @@ export default function ItineraryDetail() {
           <Text style={styles.tripName}>
             {card?.name || backendItin?.name || "Itinerary"}
           </Text>
-          <Text style={styles.subtle}>
+
+          <Text style={[styles.headerInfoText, styles.dateText]}>
+            Date:{" "}
             {card
               ? new Date(card.dateISO).toLocaleDateString()
               : backendItin?.date}
           </Text>
+
           <Text
-            style={[styles.budgetRow, budgetText.over && { color: "#D44B3A" }]}
+            style={[
+              styles.headerInfoText,
+              styles.budgetRow,
+              budgetText.over && { color: "#D44B3A" },
+            ]}
           >
-            ${budgetText.total.toFixed(0)} / ${budgetText.b.toFixed(0)}
+            Total Cost: ${budgetText.total.toFixed(0)} / $
+            {budgetText.b.toFixed(0)}
           </Text>
-          <Text style={styles.costBreakdownRow}>
-            POIs ${budgetText.poiTotal.toFixed(0)}
+
+          <Text style={[styles.headerInfoText, styles.costBreakdownRow]}>
+            POI Cost: ${budgetText.poiTotal.toFixed(0)}
           </Text>
-          <Text style={styles.costBreakdownRow}>
-            Travel ${budgetText.travelTotal.toFixed(0)}
+
+          <Text style={[styles.headerInfoText, styles.costBreakdownRow]}>
+            Travel Cost: ${budgetText.travelTotal.toFixed(0)}
           </Text>
+
           {totalTime.rangeLabel && (
-            <Text style={styles.totalTimeRow}>
-              {totalTime.rangeLabel}
-              {totalTime.durationLabel ? `) ${totalTime.durationLabel}` : ")"}
+            <Text style={[styles.headerInfoText, styles.totalTimeRow]}>
+              Time: {totalTime.rangeLabel}
+              {totalTime.durationLabel ? ` (${totalTime.durationLabel})` : ""}
             </Text>
           )}
         </View>
@@ -808,19 +829,27 @@ export default function ItineraryDetail() {
               <View style={styles.timelineRow}>
                 <View style={styles.timelineAxisCol}>
                   {!isFirst && <View style={styles.timelineLine} />}
-                  <View
-                    style={[
-                      styles.timelineDot,
-                      isFirst && styles.timelineDotStart,
-                      isLast && styles.timelineDotEnd,
-                    ]}
-                  >
-                    {(isFirst || isLast) && (
-                      <Text style={styles.timelineDotLabel}>
-                        {isFirst ? "S" : "E"}
-                      </Text>
+
+                  <View style={styles.timelineMiddleWrap}>
+                    {stayLabel && (
+                      <Text style={styles.stayLabel}>Stay {stayLabel}</Text>
                     )}
+
+                    <View
+                      style={[
+                        styles.timelineDot,
+                        isFirst && styles.timelineDotStart,
+                        isLast && styles.timelineDotEnd,
+                      ]}
+                    >
+                      {(isFirst || isLast) && (
+                        <Text style={styles.timelineDotLabel}>
+                          {isFirst ? "S" : "E"}
+                        </Text>
+                      )}
+                    </View>
                   </View>
+
                   {!isLast && <View style={styles.timelineLine} />}
                 </View>
 
@@ -830,10 +859,15 @@ export default function ItineraryDetail() {
                   )}
 
                   <View style={styles.timelineCard}>
+                    <Text style={styles.poiMeta}>
+                      Enter {timeLabel(poi.arrival_time)}
+                    </Text>
+
                     <View style={styles.poiHeaderRow}>
                       <Text style={styles.poiTitle}>
                         {poi.poi?.name ?? "POI"}
                       </Text>
+
                       <View style={styles.badgeRow}>
                         {isFirst && (
                           <View style={styles.poiBadge}>
@@ -850,20 +884,13 @@ export default function ItineraryDetail() {
 
                     <Text style={styles.poiMeta}>{categoryText}</Text>
 
-                    <Text style={styles.poiMeta}>
-                      Enter {timeLabel(poi.arrival_time)}
-                      {"   "}
-                      Exit {timeLabel(poi.departure_time)}
-                      {stayLabel ? `   •   Stay ${stayLabel}` : ""}
-                    </Text>
+                    {!!costText && (
+                      <Text style={styles.poiCost}>{costText}</Text>
+                    )}
 
-                    <View style={styles.poiFooterRow}>
-                      {costText ? (
-                        <Text style={styles.poiCost}>{costText}</Text>
-                      ) : (
-                        <View />
-                      )}
-                    </View>
+                    <Text style={styles.poiMeta}>
+                      Exit {timeLabel(poi.departure_time)}
+                    </Text>
                   </View>
                 </View>
               </View>
@@ -1237,15 +1264,35 @@ const styles = StyleSheet.create({
   },
   coverImg: { width: "100%", height: "100%" },
   headerTextWrap: { paddingHorizontal: 16, paddingTop: 12 },
-  tripName: { fontSize: 18, fontWeight: "700", color: "#1E1E1E" },
-  subtle: { color: "#8C7F7A" },
-  budgetRow: { marginTop: 6, fontWeight: "700", color: "#1E1E1E" },
-  totalTimeRow: {
-    marginTop: 2,
+  tripName: {
+    fontSize: 18,
     fontWeight: "700",
     color: "#1E1E1E",
+    marginBottom: 14,
   },
-  costBreakdownRow: { color: "#8C7F7A", marginTop: 2 },
+  subtle: {
+    color: "#8C7F7A",
+  },
+  headerInfoText: {
+    fontSize: 16,
+    fontWeight: "400",
+    lineHeight: 24,
+    marginBottom: 8,
+    color: "#8C7F7A",
+  },
+  dateText: {
+    color: "#8C7F7A",
+  },
+  budgetRow: {
+    color: "#8C7F7A",
+  },
+  costBreakdownRow: {
+    color: "#8C7F7A",
+  },
+  totalTimeRow: {
+    color: "#8C7F7A",
+    marginBottom: 0,
+  },
   tabs: {
     flexDirection: "row",
     backgroundColor: "#F3EAE6",
@@ -1257,9 +1304,6 @@ const styles = StyleSheet.create({
   tabActive: { backgroundColor: "#FFFFFF" },
   tabText: { color: "#8C7F7A" },
   tabTextActive: { color: "#1E1E1E", fontWeight: "700" },
-  poiTitle: { fontWeight: "700", color: "#1E1E1E" },
-  poiMeta: { color: "#8C7F7A", marginTop: 2 },
-  poiCost: { marginTop: 6, fontWeight: "700", color: "#1E1E1E" },
   emptyText: { textAlign: "center", color: "#8C7F7A", marginVertical: 10 },
   mapBox: {
     backgroundColor: "#FFFFFF",
@@ -1337,12 +1381,12 @@ const styles = StyleSheet.create({
   },
   timelineRow: {
     flexDirection: "row",
-    alignItems: "flex-start",
+    alignItems: "stretch",
     paddingHorizontal: 16,
-    marginBottom: 18,
+    marginBottom: 22,
   },
   timelineAxisCol: {
-    width: 30,
+    width: 76,
     alignItems: "center",
   },
   timelineLine: {
@@ -1350,14 +1394,19 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#E6DCD8",
   },
+  timelineMiddleWrap: {
+    minHeight: 34,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   timelineDot: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
     backgroundColor: "#F04623",
     alignItems: "center",
     justifyContent: "center",
-    marginVertical: 2,
+    marginVertical: 4,
   },
   timelineDotStart: {
     backgroundColor: "#2E7D32",
@@ -1370,30 +1419,55 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     fontSize: 10,
   },
+  stayLabel: {
+    color: "#8C7F7A",
+    fontSize: 12,
+    lineHeight: 16,
+    textAlign: "center",
+    marginBottom: 4,
+  },
   timelineContentCol: {
     flex: 1,
-    paddingLeft: 8,
+    paddingLeft: 4,
   },
   travelLabel: {
     fontSize: 12,
     color: "#8C7F7A",
-    marginBottom: 6,
+    marginBottom: 8,
     marginLeft: 4,
   },
   timelineCard: {
     backgroundColor: "#FFFFFF",
     borderRadius: 14,
-    padding: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 16,
     shadowColor: "#000",
     shadowOpacity: 0.06,
     shadowRadius: 8,
     shadowOffset: { width: 0, height: 4 },
+    rowGap: 12,
   },
   poiHeaderRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: 4,
+  },
+  poiTitle: {
+    fontWeight: "700",
+    color: "#1E1E1E",
+    flex: 1,
+    marginRight: 8,
+  },
+  poiMeta: {
+    color: "#8C7F7A",
+    fontSize: 14,
+    lineHeight: 20,
+  },
+  poiCost: {
+    color: "#8C7F7A",
+    fontSize: 14,
+    lineHeight: 20,
+    fontWeight: "400",
   },
   badgeRow: {
     flexDirection: "row",
@@ -1410,11 +1484,5 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: "600",
     color: "#F04623",
-  },
-  poiFooterRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginTop: 8,
   },
 });

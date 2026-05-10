@@ -156,41 +156,41 @@ export default function SignUp() {
                 }).start();
 
                 setAnimating(true);
-                } catch (err) {
-                  const axiosError = err as AxiosError<SignupErrorResponse>;
-                  const detail = axiosError.response?.data?.detail;
+              } catch (err) {
+                const axiosError = err as AxiosError<SignupErrorResponse>;
+                const detail = axiosError.response?.data?.detail;
 
-                  if (axiosError.response?.status === 400) {
-                    if (detail === "Username already exists") {
-                      setSameUsername(true);
-                      return;
-                    }
-
-                    if (detail === "Passwords do not match") {
-                      setIsPasswordMismatch(true);
-                      return;
-                    }
-
-                    if (detail === "Password cannot be less than 8 characters") {
-                      setIsPasswordTooShort(true);
-                      return;
-                    }
+                if (axiosError.response?.status === 400) {
+                  if (detail === "Username already exists") {
+                    setSameUsername(true);
+                    return;
                   }
 
-                  if (axiosError.response?.status === 422) {
-                    const detail = axiosError.response.data?.detail;
-                    const items = Array.isArray(detail) ? detail : [];
+                  if (detail === "Passwords do not match") {
+                    setIsPasswordMismatch(true);
+                    return;
+                  }
 
-                    const hasUsernameError = items.some(
-                      (d) => Array.isArray(d?.loc) && d.loc.includes("username"),
-                    );
-
-                    if (hasUsernameError) {
-                      setIsInvalidUsername(true);
-                      return;
-                    }
+                  if (detail === "Password cannot be less than 8 characters") {
+                    setIsPasswordTooShort(true);
+                    return;
                   }
                 }
+
+                if (axiosError.response?.status === 422) {
+                  const detail = axiosError.response.data?.detail;
+                  const items = Array.isArray(detail) ? detail : [];
+
+                  const hasUsernameError = items.some(
+                    (d) => Array.isArray(d?.loc) && d.loc.includes("username"),
+                  );
+
+                  if (hasUsernameError) {
+                    setIsInvalidUsername(true);
+                    return;
+                  }
+                }
+              }
             }}
           />
           <View style={{ height: 12 }} />
