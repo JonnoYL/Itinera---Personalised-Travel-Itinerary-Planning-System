@@ -43,13 +43,15 @@ class UserService:
             )
         return user
 
-    def signup(self, request: AuthRequest) -> AuthResponse:
+    def signup(self, request) -> AuthResponse:
         """Register a new user and return an authentication token"""
         username = request.username
         password = request.password
+        confirmed_password = getattr(request, "confirmed_password", None)
 
-        if not username:
+        if not username or not username.strip():
             raise HTTPException(status_code=400, detail="Username cannot be empty")
+
         if not password:
             raise HTTPException(status_code=400, detail="Password cannot be empty")
 
@@ -59,25 +61,38 @@ class UserService:
                 detail="Username already exists"
             )
 
+        if confirmed_password is not None and password != confirmed_password:
+            raise HTTPException(
+                status_code=400,
+                detail="Passwords do not match"
+            )
+
         if len(password) < 8:
             raise HTTPException(
                 status_code=400,
-                detail="Password must be at least 8 characters long"
+                detail="Password cannot be less than 8 characters"
             )
 
-        password_hash = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
-        user_dict = {'username': username, 'password_hash': password_hash}
+        password_hash = bcrypt.hashpw(
+            password.encode("utf-8"), bcrypt.gensalt()
+        ).decode("utf-8")
+
+        user_dict = {
+            "username": username,
+            "password_hash": password_hash,
+        }
 
         try:
             new_user = self.user_repo.create_user(user_dict)
         except Exception as e:
             print(e)
-            raise HTTPException(status_code=500, detail='Database Error')
+            raise HTTPException(status_code=500, detail="Database Error")
 
         payload = {
             "sub": str(new_user.user_id),
             "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=1),
         }
+
         token = jwt.encode(payload, JWT_SECRET, algorithm=ALGORITHM)
         return {"token": token, "user_id": new_user.user_id}
 

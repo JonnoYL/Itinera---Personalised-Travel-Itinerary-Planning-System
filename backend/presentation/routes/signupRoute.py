@@ -1,4 +1,4 @@
-from application.models.authModels import AuthRequest
+from application.models.authModels import SignupRequest
 from database.setup import get_db
 from dotenv import load_dotenv
 from fastapi import APIRouter, Depends, HTTPException
@@ -24,7 +24,7 @@ router = APIRouter(
     },
 )
 
-async def signup(request: AuthRequest, db: Session = Depends(get_db)):
+async def signup(request: SignupRequest, db: Session = Depends(get_db)):
     if not request.username or not request.username.strip():
         raise HTTPException(
             status_code=422,

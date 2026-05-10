@@ -131,27 +131,12 @@ export default function SignUp() {
               setIsPasswordTooShort(false);
               setSameUsername(false);
               setIsInvalidUsername(false);
-              setSignupError("");
-
-              if (!username.trim()) {
-                setIsInvalidUsername(true);
-                return;
-              }
-
-              if (password !== confirmedPassword) {
-                setIsPasswordMismatch(true);
-                return;
-              }
-
-              if (password.length < 8) {
-                setIsPasswordTooShort(true);
-                return;
-              }
 
               try {
                 const signupResult = await signUpWithUsernamePassword(
                   username.trim(),
                   password,
+                  confirmedPassword,
                 );
 
                 if (!signupResult) {
@@ -171,36 +156,41 @@ export default function SignUp() {
                 }).start();
 
                 setAnimating(true);
-              } catch (err) {
-                const axiosError = err as AxiosError<SignupErrorResponse>;
+                } catch (err) {
+                  const axiosError = err as AxiosError<SignupErrorResponse>;
+                  const detail = axiosError.response?.data?.detail;
 
-                if (axiosError.response?.status === 422) {
-                  const detail = axiosError.response.data?.detail;
-                  const items = Array.isArray(detail) ? detail : [];
+                  if (axiosError.response?.status === 400) {
+                    if (detail === "Username already exists") {
+                      setSameUsername(true);
+                      return;
+                    }
 
-                  const hasUsernameError = items.some(
-                    (d) => Array.isArray(d?.loc) && d.loc.includes("username"),
-                  );
+                    if (detail === "Passwords do not match") {
+                      setIsPasswordMismatch(true);
+                      return;
+                    }
 
-                  const hasPasswordError = items.some(
-                    (d) => Array.isArray(d?.loc) && d.loc.includes("password"),
-                  );
-
-                  if (hasUsernameError) {
-                    setIsInvalidUsername(true);
-                    return;
+                    if (detail === "Password cannot be less than 8 characters") {
+                      setIsPasswordTooShort(true);
+                      return;
+                    }
                   }
 
-                  if (hasPasswordError) {
-                    setIsPasswordTooShort(true);
-                    return;
+                  if (axiosError.response?.status === 422) {
+                    const detail = axiosError.response.data?.detail;
+                    const items = Array.isArray(detail) ? detail : [];
+
+                    const hasUsernameError = items.some(
+                      (d) => Array.isArray(d?.loc) && d.loc.includes("username"),
+                    );
+
+                    if (hasUsernameError) {
+                      setIsInvalidUsername(true);
+                      return;
+                    }
                   }
                 }
-
-                setSignupError(
-                  "Sign up failed. Check the backend is running and try again.",
-                );
-              }
             }}
           />
           <View style={{ height: 12 }} />

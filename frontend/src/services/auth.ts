@@ -14,11 +14,13 @@ const BASE_URL = process.env.EXPO_PUBLIC_API_URL || "http://localhost:8000";
 export async function signUpWithUsernamePassword(
   username: string,
   password: string,
+  confirmedPassword: string,
 ): Promise<AuthResponse | null> {
   try {
     const { data } = await axios.post<AuthResponse>(`${BASE_URL}/auth/signup`, {
       username,
       password,
+      confirmed_password: confirmedPassword,
     });
 
     return data;
