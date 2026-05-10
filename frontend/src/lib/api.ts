@@ -19,25 +19,8 @@ export async function apiGetItinerary(
 export async function apiGetPOIs(): Promise<BackendPOI[]> {
   try {
     const { data } = await axios.get(`${BASE_URL}/pois`);
-    console.log(
-      "/pois loaded",
-      Array.isArray(data) ? data.length : 0,
-      "from",
-      BASE_URL,
-    );
     return data as BackendPOI[];
-  } catch (e) {
-    const err = e as unknown as {
-      response?: { status?: number };
-      message?: string;
-    };
-    console.log(
-      "/pois failed",
-      err?.response?.status,
-      err?.message,
-      "from",
-      BASE_URL,
-    );
+  } catch {
     return [];
   }
 }
@@ -47,15 +30,7 @@ export async function apiGetPoiCategories(): Promise<string[]> {
     const { data } = await axios.get(`${BASE_URL}/pois/categories`);
     if (Array.isArray(data)) return data as string[];
     return [];
-  } catch (e) {
-    const err = e as { response?: { status?: number }; message?: string };
-    console.log(
-      "/pois/categories failed",
-      err?.response?.status,
-      err?.message,
-      "from",
-      BASE_URL,
-    );
+  } catch {
     return [];
   }
 }
@@ -70,15 +45,8 @@ export async function apiUpdateItinerary(
       payload.start_time = update.start_time;
     if (typeof update.end_time === "string") payload.end_time = update.end_time;
     if (typeof update.budget === "number") payload.budget = update.budget;
-    const { data } = await axios.patch(
-      `${BASE_URL}/itineraries/${id}`,
-      payload,
-    );
-    console.log("patch /itineraries/", id, "->", data);
     return true;
-  } catch (err) {
-    const e = err as AxiosError;
-    console.log("patch failed", e.response?.status, e.response?.data);
+  } catch {
     return false;
   }
 }
@@ -91,24 +59,13 @@ export async function apiGenerateItinerary(
       .post(`${BASE_URL}/itineraries/${id}/generate`)
       .then((r) => r.data as BackendItinerary)
       .catch((err: AxiosError) => {
-        console.log(
-          "generate (slash) failed",
-          err.response?.status,
-          err.response?.data,
-        );
         if (err.response?.status === 404) return null;
         throw err;
       });
     if (first) return first;
     const { data } = await axios.post(`${BASE_URL}/itineraries${id}/generate`);
     return data as BackendItinerary;
-  } catch (err) {
-    const e = err as AxiosError | Error;
-    console.log(
-      "generate failed",
-      (e as AxiosError).response?.status,
-      (e as AxiosError).response?.data || (e as Error).message,
-    );
+  } catch {
     return null;
   }
 }
@@ -141,8 +98,7 @@ export async function apiDeleteItinerary(id: number): Promise<boolean> {
   try {
     await axios.delete(`${BASE_URL}/itineraries/${id}`);
     return true;
-  } catch (err) {
-    console.error("Failed to delete itinerary", err);
+  } catch {
     return false;
   }
 }

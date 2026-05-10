@@ -177,8 +177,7 @@ export default function Home() {
     }, [load]),
   );
 
-  useEffect(() => {
-  }, []);
+  useEffect(() => {}, []);
 
   const zoomBy = useCallback(
     (factor: number) => {

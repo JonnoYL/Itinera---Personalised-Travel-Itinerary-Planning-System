@@ -26,9 +26,7 @@ export default function SignUp() {
   const [isPasswordTooShort, setIsPasswordTooShort] = useState(false);
   const [confirmedPassword, setConfirmedPassword] = useState("");
   const [animating, setAnimating] = useState(false);
-  const [hasAnimCompleted, setHasAnimCompleted] = useState(false);
   const [sameUsername, setSameUsername] = useState(false);
-  const [hasLoginResolved, setHasLoginResolved] = useState(false);
   const [isInvalidUsername, setIsInvalidUsername] = useState(false);
   const formOpacity = useRef(new Animated.Value(1)).current;
   const [signupError, setSignupError] = useState("");
@@ -55,18 +53,18 @@ export default function SignUp() {
               }}
             />
             <View style={{ height: 12 }} />
-              <TextField
-                placeholder="Password"
-                secureTextEntry
-                value={password}
-                onChangeText={(text) => {
-                  setPassword(text);
-                  setIsPasswordMismatch(false);
-                  setIsPasswordTooShort(false);
-                  setSameUsername(false);
-                  setSignupError("");
-                }}
-              />
+            <TextField
+              placeholder="Password"
+              secureTextEntry
+              value={password}
+              onChangeText={(text) => {
+                setPassword(text);
+                setIsPasswordMismatch(false);
+                setIsPasswordTooShort(false);
+                setSameUsername(false);
+                setSignupError("");
+              }}
+            />
             {showHelp && (
               <HelpPopUp
                 modalVisible={showHelp}
@@ -74,17 +72,17 @@ export default function SignUp() {
               />
             )}
             <View style={{ height: 12 }} />
-              <TextField
-                placeholder="Confirm Password"
-                secureTextEntry
-                value={confirmedPassword}
-                onChangeText={(text) => {
-                  setConfirmedPassword(text);
-                  setIsPasswordMismatch(false);
-                  setSameUsername(false);
-                  setSignupError("");
-                }}
-              />
+            <TextField
+              placeholder="Confirm Password"
+              secureTextEntry
+              value={confirmedPassword}
+              onChangeText={(text) => {
+                setConfirmedPassword(text);
+                setIsPasswordMismatch(false);
+                setSameUsername(false);
+                setSignupError("");
+              }}
+            />
 
             {isPasswordMismatch && (
               <View>
@@ -199,7 +197,9 @@ export default function SignUp() {
                   }
                 }
 
-                setSignupError("Sign up failed. Check the backend is running and try again.");
+                setSignupError(
+                  "Sign up failed. Check the backend is running and try again.",
+                );
               }
             }}
           />

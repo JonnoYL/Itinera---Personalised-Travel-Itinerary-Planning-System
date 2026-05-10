@@ -179,8 +179,7 @@ export default function NewItinerary() {
         if (!cancelled && Array.isArray(list) && list.length > 0) {
           setCategories(list);
         }
-      } catch {
-      }
+      } catch {}
     })();
     return () => {
       cancelled = true;
@@ -226,8 +225,7 @@ export default function NewItinerary() {
           return next;
         });
       }
-    } catch {
-    }
+    } catch {}
   }
 
   const toggleCategory = (label: string) => {
@@ -338,7 +336,6 @@ export default function NewItinerary() {
             ? endPlace.categories[0]
             : "tourism.sights.city_hall");
       }
-      console.log("Sending itinerary to backend:", backendPayload);
       const response = await axios.post(
         `${BASE_URL}/itineraries`,
         backendPayload,
@@ -366,11 +363,9 @@ export default function NewItinerary() {
         return;
       }
 
-      // @ts-expect-error
+      // @ts-expect-error comment
       navigation.replace("ItineraryDetail", { backendId: createdId });
-    } catch (e) {
-      const err = e as AxiosError<unknown>;
-      console.error("Itinerary create/generate failed:", err);
+    } catch {
       Alert.alert("Error", "Create failed.");
     } finally {
       setIsCreating(false);
