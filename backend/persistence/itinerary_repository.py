@@ -35,14 +35,9 @@ class ItineraryRepository:
             for itinerary in database_responses
         ]
 
-    def add_pois_to_itinerary(self, itinerary_id: int, poi_ids: List[int]):
+    def add_pois_to_itinerary(self, itinerary_id: int, poi_details: List[dict]):
         """Add pois to existing itinerary in order"""
         self.db_layer.add_pois_to_itinerary(itinerary_id, poi_ids)
-
-    def get_itinerary_pois(self, itinerary_id: int) -> List[int]:
-        """Returns list of POI ids in order for queried itinerary"""
-        pois = self.db_layer.get_itinerary_pois(itinerary_id)
-        return [link.poi_id for link in pois]
 
     def update_itinerary_stats(
         self,

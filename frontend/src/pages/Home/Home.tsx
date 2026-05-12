@@ -177,8 +177,6 @@ export default function Home() {
     }, [load]),
   );
 
-  useEffect(() => {}, []);
-
   const zoomBy = useCallback(
     (factor: number) => {
       const cur = region;

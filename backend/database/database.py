@@ -181,15 +181,6 @@ class ItineraryDatabase:
         self.db.refresh(itinerary)
         return itinerary
 
-    def get_itinerary_pois(self, itinerary_id: int) -> List[ItineraryPOI]:
-        """Return ordered POIs for an itinerary."""
-        return (
-            self.db.query(ItineraryPOI)
-            .filter(ItineraryPOI.itinerary_id == itinerary_id)
-            .order_by(ItineraryPOI.order_index)
-            .all()
-        )
-
     def update_itinerary_stats(
         self,
         itinerary_id: int,

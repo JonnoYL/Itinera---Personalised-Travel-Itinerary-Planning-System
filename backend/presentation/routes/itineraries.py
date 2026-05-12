@@ -20,9 +20,6 @@ router = APIRouter(
     tags=["Itineraries"],
 )
 
-class ErrorMessage(BaseModel):
-    detail: str
-
 def get_service(db: Session):
     """Helper function to initialize repositories and service"""
     user_repo = UserRepository(db)

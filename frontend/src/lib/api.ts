@@ -35,22 +35,6 @@ export async function apiGetPoiCategories(): Promise<string[]> {
   }
 }
 
-export async function apiUpdateItinerary(
-  id: number,
-  update: Partial<{ start_time: string; end_time: string; budget: number }>,
-): Promise<boolean> {
-  try {
-    const payload: Record<string, unknown> = {};
-    if (typeof update.start_time === "string")
-      payload.start_time = update.start_time;
-    if (typeof update.end_time === "string") payload.end_time = update.end_time;
-    if (typeof update.budget === "number") payload.budget = update.budget;
-    return true;
-  } catch {
-    return false;
-  }
-}
-
 export async function apiGenerateItinerary(
   id: number,
 ): Promise<BackendItinerary | null> {
